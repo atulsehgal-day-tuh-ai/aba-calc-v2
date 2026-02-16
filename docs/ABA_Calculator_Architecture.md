@@ -575,18 +575,22 @@ Every transition is recorded in `audit_log` with:
 │ index.html   │  │ └─ Routes: claims, patients,  │
 │ JS bundles   │  │    analytics, payer-profiles   │
 │ CSS          │  └──────────────┬────────────────┘
-└──────────────┘                 │ libSQL (HTTP)
+└──────────────┘                 │ libSQL
                                  ▼
                   ┌──────────────────────────────┐
-                  │ Turso Cloud SQLite            │
-                  │ libsql://aba-calc-*.turso.io  │
-                  │ @libsql/client                │
+                  │ If TURSO_URL set:             │
+                  │   Turso Cloud SQLite (remote) │
+                  │   libsql://aba-calc-*.turso.io│
+                  │                               │
+                  │ If TURSO_URL not set:          │
+                  │   In-Memory libSQL (demo mode) │
+                  │   Data resets on cold start    │
                   └──────────────────────────────┘
 ```
 
-### Dual-Mode Database Client
+### Tri-Mode Database Client
 
-The `server/db/index.ts` module provides a unified `DbClient` interface:
+The `server/db/index.ts` module provides a unified `DbClient` interface with three runtime modes:
 
 ```typescript
 interface DbClient {
@@ -594,15 +598,21 @@ interface DbClient {
 }
 ```
 
-- **Local** (`TURSO_URL` not set): Creates `better-sqlite3` instance, wraps synchronous calls in async
-- **Production** (`TURSO_URL` set): Creates `@libsql/client` connection using `TURSO_URL` and `TURSO_AUTH_TOKEN`
+| Mode | When Active | Technology | Persistence |
+| ---- | ----------- | ---------- | ----------- |
+| **Turso Remote** | `TURSO_URL` env var is set | `@libsql/client` over HTTP | ✅ Full persistence (cloud) |
+| **In-Memory libSQL** | On Vercel (`VERCEL=1`) without `TURSO_URL` | `@libsql/client` with `:memory:` | ⚠️ Warm invocations only (demo) |
+| **Local SQLite** | Local dev (no `VERCEL`, no `TURSO_URL`) | `better-sqlite3` file-based | ✅ Full persistence (local file) |
 
-### Environment Variables (Production)
+The in-memory mode enables the app to run as a functional demo on Vercel even without a Turso database configured. Data persists across warm serverless invocations but resets on cold starts. Schema and seed data are re-applied on each cold start.
 
-| Variable | Description |
-| -------- | ----------- |
-| `TURSO_URL` | Turso database URL (e.g. `libsql://aba-calc-v2-user.turso.io`) |
-| `TURSO_AUTH_TOKEN` | Turso authentication token |
+### Environment Variables
+
+| Variable | Required | Description |
+| -------- | -------- | ----------- |
+| `TURSO_URL` | For persistent cloud DB | Turso database URL (e.g. `libsql://aba-calc-v2-user.turso.io`) |
+| `TURSO_AUTH_TOKEN` | With `TURSO_URL` | Turso authentication token |
+| `VERCEL` | Auto-set by Vercel | Triggers in-memory fallback when `TURSO_URL` is absent |
 
 ### Vercel Configuration (`vercel.json`)
 

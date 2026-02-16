@@ -23,12 +23,22 @@ export interface DbClient {
 let client: DbClient | null = null;
 let initialized = false;
 
+// Detect serverless environment (Vercel sets VERCEL=1)
+const isServerless = !!process.env.VERCEL;
+
 async function createTursoClient(): Promise<DbClient> {
   const { createClient } = await import('@libsql/client');
   return createClient({
     url: process.env.TURSO_URL!,
     authToken: process.env.TURSO_AUTH_TOKEN,
   });
+}
+
+async function createLibsqlInMemoryClient(): Promise<DbClient> {
+  // Use @libsql/client with in-memory DB for serverless without Turso configured.
+  // Data persists across warm invocations but resets on cold starts — fine for demo.
+  const { createClient } = await import('@libsql/client');
+  return createClient({ url: ':memory:' });
 }
 
 async function createLocalClient(): Promise<DbClient> {
@@ -68,6 +78,9 @@ export async function initDb(): Promise<DbClient> {
     if (process.env.TURSO_URL) {
       console.log('🌐 Using Turso (remote) database');
       client = await createTursoClient();
+    } else if (isServerless) {
+      console.log('🧪 Using in-memory libSQL (serverless demo mode)');
+      client = await createLibsqlInMemoryClient();
     } else {
       console.log('💾 Using local SQLite database');
       client = await createLocalClient();
