@@ -1,19 +1,90 @@
-import Database from 'better-sqlite3';
-import path from 'path';
 import { SCHEMA } from './schema.js';
 import { seedDatabase } from './seed.js';
 
-const DB_PATH = path.join(process.cwd(), 'server', 'db', 'aba.db');
+// ============================================================================
+// Dual-mode DB layer:
+//   - If TURSO_URL is set → use @libsql/client (Vercel / production)
+//   - Otherwise → use better-sqlite3 (local development)
+// Both expose the same DbClient interface.
+// ============================================================================
 
-let db: Database.Database;
+export interface DbRow {
+  [key: string]: any;
+}
 
-export function getDb(): Database.Database {
-  if (!db) {
-    db = new Database(DB_PATH);
-    db.pragma('journal_mode = WAL');
-    db.pragma('foreign_keys = ON');
-    db.exec(SCHEMA);
-    seedDatabase(db);
+export interface DbResult {
+  rows: DbRow[];
+}
+
+export interface DbClient {
+  execute(sqlOrObj: string | { sql: string; args?: any[] }): Promise<DbResult>;
+}
+
+let client: DbClient | null = null;
+let initialized = false;
+
+async function createTursoClient(): Promise<DbClient> {
+  const { createClient } = await import('@libsql/client');
+  return createClient({
+    url: process.env.TURSO_URL!,
+    authToken: process.env.TURSO_AUTH_TOKEN,
+  });
+}
+
+async function createLocalClient(): Promise<DbClient> {
+  const Database = (await import('better-sqlite3')).default;
+  const path = await import('path');
+  const dbPath = path.join(process.cwd(), 'server', 'db', 'aba.db');
+  const db = new Database(dbPath);
+  db.pragma('journal_mode = WAL');
+  db.pragma('foreign_keys = ON');
+
+  // Wrap synchronous better-sqlite3 in our async DbClient interface
+  return {
+    async execute(sqlOrObj: string | { sql: string; args?: any[] }): Promise<DbResult> {
+      const sql = typeof sqlOrObj === 'string' ? sqlOrObj : sqlOrObj.sql;
+      const args = typeof sqlOrObj === 'string' ? [] : (sqlOrObj.args || []);
+      const isSelect = sql.trimStart().toUpperCase().startsWith('SELECT');
+      if (isSelect) {
+        const rows = db.prepare(sql).all(...args);
+        return { rows };
+      } else {
+        db.prepare(sql).run(...args);
+        return { rows: [] };
+      }
+    },
+  };
+}
+
+export function getDb(): DbClient {
+  if (!client) {
+    throw new Error('Database not initialized. Call initDb() first.');
   }
-  return db;
+  return client;
+}
+
+export async function initDb(): Promise<DbClient> {
+  if (!client) {
+    if (process.env.TURSO_URL) {
+      console.log('🌐 Using Turso (remote) database');
+      client = await createTursoClient();
+    } else {
+      console.log('💾 Using local SQLite database');
+      client = await createLocalClient();
+    }
+  }
+
+  if (!initialized) {
+    // Execute each CREATE TABLE statement individually
+    const statements = SCHEMA.split(';')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    for (const sql of statements) {
+      await client.execute(sql);
+    }
+    await seedDatabase(client);
+    initialized = true;
+  }
+
+  return client;
 }

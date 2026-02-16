@@ -4,21 +4,27 @@ import { getDb } from '../db/index.js';
 const router = Router();
 
 // GET /api/analytics
-router.get('/', (_req, res) => {
+router.get('/', async (_req, res) => {
   const db = getDb();
 
-  const total = (db.prepare('SELECT COUNT(*) as c FROM claims').get() as any).c;
-  const approved = (db.prepare("SELECT COUNT(*) as c FROM claims WHERE status = 'approved'").get() as any).c;
-  const denied = (db.prepare("SELECT COUNT(*) as c FROM claims WHERE status = 'denied'").get() as any).c;
-  const pending = (db.prepare("SELECT COUNT(*) as c FROM claims WHERE status NOT IN ('approved', 'denied')").get() as any).c;
+  const totalResult = await db.execute('SELECT COUNT(*) as c FROM claims');
+  const total = totalResult.rows[0]?.c as number;
 
-  const avgRow = db.prepare('SELECT AVG(recommended_hours) as avgH, AVG(age) as avgA FROM claims').get() as any;
-  const avgHours = avgRow?.avgH || 0;
-  const avgAge = avgRow?.avgA || 0;
+  const approvedResult = await db.execute("SELECT COUNT(*) as c FROM claims WHERE status = 'approved'");
+  const approved = approvedResult.rows[0]?.c as number;
 
-  // Most common tier
-  const tierRow = db.prepare('SELECT tier, COUNT(*) as c FROM claims GROUP BY tier ORDER BY c DESC LIMIT 1').get() as any;
-  const commonTier = tierRow?.tier || null;
+  const deniedResult = await db.execute("SELECT COUNT(*) as c FROM claims WHERE status = 'denied'");
+  const denied = deniedResult.rows[0]?.c as number;
+
+  const pendingResult = await db.execute("SELECT COUNT(*) as c FROM claims WHERE status NOT IN ('approved', 'denied')");
+  const pending = pendingResult.rows[0]?.c as number;
+
+  const avgResult = await db.execute('SELECT AVG(recommended_hours) as avgH, AVG(age) as avgA FROM claims');
+  const avgHours = (avgResult.rows[0]?.avgH as number) || 0;
+  const avgAge = (avgResult.rows[0]?.avgA as number) || 0;
+
+  const tierResult = await db.execute('SELECT tier, COUNT(*) as c FROM claims GROUP BY tier ORDER BY c DESC LIMIT 1');
+  const commonTier = tierResult.rows[0]?.tier ?? null;
 
   res.json({
     total,

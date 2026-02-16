@@ -4,12 +4,12 @@ import { getDb } from '../db/index.js';
 const router = Router();
 
 // GET /api/payer-profiles
-router.get('/', (_req, res) => {
+router.get('/', async (_req, res) => {
   const db = getDb();
-  const rows = db.prepare('SELECT * FROM payer_profiles ORDER BY name').all() as any[];
+  const result = await db.execute('SELECT * FROM payer_profiles ORDER BY name');
 
   // Transform DB rows to PayerProfile shape
-  const profiles = rows.map((r) => ({
+  const profiles = result.rows.map((r: any) => ({
     id: r.id,
     name: r.name,
     maxHours: r.max_hours,
@@ -28,11 +28,12 @@ router.get('/', (_req, res) => {
 });
 
 // GET /api/payer-profiles/:id
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const db = getDb();
-  const r = db.prepare('SELECT * FROM payer_profiles WHERE id = ?').get(req.params.id) as any;
-  if (!r) return res.status(404).json({ error: 'Profile not found' });
+  const result = await db.execute({ sql: 'SELECT * FROM payer_profiles WHERE id = ?', args: [req.params.id] });
+  if (result.rows.length === 0) return res.status(404).json({ error: 'Profile not found' });
 
+  const r: any = result.rows[0];
   res.json({
     id: r.id,
     name: r.name,
@@ -50,25 +51,26 @@ router.get('/:id', (req, res) => {
 });
 
 // PUT /api/payer-profiles/:id
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   const db = getDb();
   const data = req.body;
 
-  db.prepare(`
-    UPDATE payer_profiles SET
+  await db.execute({
+    sql: `UPDATE payer_profiles SET
       name = ?, max_hours = ?, min_hours = ?,
       fii_w = ?, vin_w = ?, vb_w = ?, beh_w = ?, env_w = ?,
       age_mult_young = ?, age_mult_mid = ?, age_mult_teen = ?,
       sup_pct = ?, pt_range_min = ?, pt_range_max = ?,
       updated_at = datetime('now')
-    WHERE id = ?
-  `).run(
-    data.name, data.maxHours, data.minHours,
-    data.fiiW, data.vinW, data.vbW, data.behW, data.envW,
-    data.ageMult?.young, data.ageMult?.mid, data.ageMult?.teen,
-    data.supPct, data.ptRange?.[0], data.ptRange?.[1],
-    req.params.id
-  );
+    WHERE id = ?`,
+    args: [
+      data.name, data.maxHours, data.minHours,
+      data.fiiW, data.vinW, data.vbW, data.behW, data.envW,
+      data.ageMult?.young, data.ageMult?.mid, data.ageMult?.teen,
+      data.supPct, data.ptRange?.[0], data.ptRange?.[1],
+      req.params.id,
+    ],
+  });
 
   res.json({ success: true });
 });

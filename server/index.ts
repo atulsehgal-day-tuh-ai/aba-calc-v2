@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { initDb } from './db/index.js';
 import claimsRouter from './routes/claims.js';
 import patientsRouter from './routes/patients.js';
 import analyticsRouter from './routes/analytics.js';
@@ -22,6 +23,14 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 ABA Calculator API running on http://localhost:${PORT}`);
+// Initialize DB then start listening
+initDb().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 ABA Calculator API running on http://localhost:${PORT}`);
+  });
+}).catch((err) => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
 });
+
+export { app };

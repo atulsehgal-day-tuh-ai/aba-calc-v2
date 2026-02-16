@@ -14,6 +14,10 @@ dist
 *.db-wal
 dist-ssr
 *.local
+.env
+.env.*
+!.env.example
+.vercel
 
 # Editor directories and files
 .vscode/*
