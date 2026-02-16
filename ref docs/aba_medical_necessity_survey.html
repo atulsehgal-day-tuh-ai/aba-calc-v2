@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ABA Medical Necessity Assessment Survey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .header h1 {
+            color: #2d3748;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #718096;
+            font-size: 16px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-number {
+            background: #667eea;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+        }
+        
+        .question-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        
+        .required {
+            color: #e53e3e;
+            margin-left: 4px;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .radio-option,
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover,
+        .checkbox-option:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+        
+        .radio-option input[type="radio"],
+        .checkbox-option input[type="checkbox"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .helper-text {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 6px;
+            font-style: italic;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+            
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+        
+        .results {
+            display: none;
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .results h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .recommendation {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .recommendation h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ABA Medical Necessity Assessment</h1>
+            <p>Complete this survey to receive dosage hour and goal recommendations</p>
+        </div>
+        
+        <form id="assessmentForm">
+            <!-- Section 1: Client Demographics -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">1</span>
+                    Client Demographics
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Client Age <span class="required">*</span>
+                    </label>
+                    <input type="number" name="age" min="0" max="21" required>
+                    <div class="helper-text">Enter age in years</div>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Current School/Educational Setting <span class="required">*</span>
+                    </label>
+                    <select name="educational_setting" required>
+                        <option value="">Select setting...</option>
+                        <option value="not_enrolled">Not enrolled in school</option>
+                        <option value="early_intervention">Early Intervention (0-3)</option>
+                        <option value="preschool">Preschool</option>
+                        <option value="general_ed">General Education (mainstream)</option>
+                        <option value="general_ed_support">General Education with support services</option>
+                        <option value="special_ed_partial">Special Education (partial day)</option>
+                        <option value="special_ed_full">Special Education (full day)</option>
+                        <option value="homeschool">Homeschool</option>
+                        <option value="residential">Residential placement</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Living Situation <span class="required">*</span>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="living_situation" value="family_home" required>
+                            <span>Family home</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="living_situation" value="foster_care" required>
+                            <span>Foster care</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="living_situation" value="group_home" required>
+                            <span>Group home</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="living_situation" value="residential" required>
+                            <span>Residential treatment facility</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 2: Diagnosis & Assessment -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">2</span>
+                    Diagnosis & Assessment Information
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Primary Diagnosis <span class="required">*</span>
+                    </label>
+                    <select name="primary_diagnosis" required>
+                        <option value="">Select diagnosis...</option>
+                        <option value="asd_level1">Autism Spectrum Disorder - Level 1 (requiring support)</option>
+                        <option value="asd_level2">Autism Spectrum Disorder - Level 2 (requiring substantial support)</option>
+                        <option value="asd_level3">Autism Spectrum Disorder - Level 3 (requiring very substantial support)</option>
+                        <option value="asd_unspecified">Autism Spectrum Disorder - Unspecified</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Co-occurring Diagnoses
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="comorbid" value="adhd">
+                            <span>ADHD</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="comorbid" value="anxiety">
+                            <span>Anxiety Disorder</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="comorbid" value="intellectual_disability">
+                            <span>Intellectual Disability</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="comorbid" value="mood_disorder">
+                            <span>Mood Disorder</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="comorbid" value="language_disorder">
+                            <span>Language Disorder</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="comorbid" value="genetic_syndrome">
+                            <span>Genetic Syndrome</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="comorbid" value="seizure_disorder">
+                            <span>Seizure Disorder</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Most Recent Adaptive Functioning Score <span class="required">*</span>
+                    </label>
+                    <div class="grid-2">
+                        <div>
+                            <select name="adaptive_assessment" required>
+                                <option value="">Select assessment...</option>
+                                <option value="vineland3">Vineland-3</option>
+                                <option value="vineland2">Vineland-II</option>
+                                <option value="abas3">ABAS-3</option>
+                                <option value="adaptive_behavior_assessment">Adaptive Behavior Assessment System</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input type="number" name="adaptive_score" min="20" max="160" placeholder="Composite Score" required>
+                        </div>
+                    </div>
+                    <div class="helper-text">Typical range: 55-145 (Standard Score)</div>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        VB-MAPP Assessment Results
+                    </label>
+                    <div class="grid-2">
+                        <div>
+                            <label style="font-size: 13px; color: #718096; display: block; margin-bottom: 5px;">Milestones Score (0-170)</label>
+                            <input type="number" name="vbmapp_milestones" min="0" max="170" placeholder="Total Milestones">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: #718096; display: block; margin-bottom: 5px;">Barriers Score (0-100)</label>
+                            <input type="number" name="vbmapp_barriers" min="0" max="100" placeholder="Total Barriers">
+                        </div>
+                    </div>
+                    <div class="helper-text">VB-MAPP assesses language and social skills based on Skinner's verbal behavior</div>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        ABLLS-R Assessment Completion
+                    </label>
+                    <div class="grid-2">
+                        <div>
+                            <label style="font-size: 13px; color: #718096; display: block; margin-bottom: 5px;">Skills Mastered (%)</label>
+                            <input type="number" name="ablls_mastered" min="0" max="100" placeholder="Percent mastered">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: #718096; display: block; margin-bottom: 5px;">Number of Priority Areas</label>
+                            <input type="number" name="ablls_priority_areas" min="0" max="25" placeholder="Priority areas">
+                        </div>
+                    </div>
+                    <div class="helper-text">ABLLS-R tracks skills across 25 domains including language, self-help, and academics</div>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        AFLS (Assessment of Functional Living Skills)
+                    </label>
+                    <div class="grid-2">
+                        <div>
+                            <label style="font-size: 13px; color: #718096; display: block; margin-bottom: 5px;">Module Completed</label>
+                            <select name="afls_module">
+                                <option value="">Select module...</option>
+                                <option value="basic_living">Basic Living Skills</option>
+                                <option value="home">Home Skills</option>
+                                <option value="community">Community Participation</option>
+                                <option value="school">School Skills</option>
+                                <option value="vocational">Vocational Skills</option>
+                                <option value="independent">Independent Living Skills</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: #718096; display: block; margin-bottom: 5px;">Score/Total Items (%)</label>
+                            <input type="number" name="afls_percentage" min="0" max="100" placeholder="Percentage">
+                        </div>
+                    </div>
+                    <div class="helper-text">AFLS measures functional, practical daily living and vocational skills</div>
+                </div>
+            </div>
+            
+            <!-- Section 3: Skill Deficits -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">3</span>
+                    Areas of Skill Deficit
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Select all domains with significant deficits <span class="required">*</span>
+                    </label>
+                    <div class="helper-text">Check areas where client is performing significantly below age level</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="skill_deficits" value="communication" required>
+                            <span>Communication (expressive/receptive language)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="skill_deficits" value="social">
+                            <span>Social Skills (peer interaction, reciprocity)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="skill_deficits" value="play">
+                            <span>Play Skills (functional, symbolic, cooperative)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="skill_deficits" value="self_care">
+                            <span>Self-Care/Daily Living (toileting, feeding, dressing)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="skill_deficits" value="academic">
+                            <span>Academic/Pre-Academic Skills</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="skill_deficits" value="motor">
+                            <span>Motor Skills (fine/gross motor)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="skill_deficits" value="executive_function">
+                            <span>Executive Functioning (attention, flexibility, problem-solving)</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="skill_deficits" value="community">
+                            <span>Community/Safety Skills</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 4: Interfering Behaviors -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">4</span>
+                    Interfering Behaviors
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Presence of Challenging Behaviors <span class="required">*</span>
+                    </label>
+                    <select name="behavior_severity" required>
+                        <option value="">Select severity level...</option>
+                        <option value="none">No significant challenging behaviors</option>
+                        <option value="mild">Mild - Behaviors present but minimally interfere with learning</option>
+                        <option value="moderate">Moderate - Behaviors regularly interfere with daily activities</option>
+                        <option value="severe">Severe - Behaviors significantly impair functioning across settings</option>
+                        <option value="crisis">Crisis level - Safety concerns, high risk behaviors</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Types of Challenging Behaviors Present
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="behaviors" value="aggression">
+                            <span>Aggression toward others</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="behaviors" value="self_injury">
+                            <span>Self-injurious behavior</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="behaviors" value="elopement">
+                            <span>Elopement/wandering</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="behaviors" value="property_destruction">
+                            <span>Property destruction</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="behaviors" value="tantrums">
+                            <span>Tantrums/meltdowns</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="behaviors" value="noncompliance">
+                            <span>Noncompliance/refusal</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="behaviors" value="stereotypy">
+                            <span>Stereotypy/repetitive behaviors (interfering with learning)</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Has a Functional Behavior Assessment (FBA) been completed? <span class="required">*</span>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="fba_completed" value="yes" required>
+                            <span>Yes, FBA completed</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="fba_completed" value="no" required>
+                            <span>No, FBA needed</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="fba_completed" value="in_progress" required>
+                            <span>In progress</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 5: Current Services & History -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">5</span>
+                    Service History
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Previous ABA Services <span class="required">*</span>
+                    </label>
+                    <select name="previous_aba" required>
+                        <option value="">Select...</option>
+                        <option value="none">No previous ABA services</option>
+                        <option value="early_intervention">Previous EI services only (0-3 years)</option>
+                        <option value="previous_completed">Previously received ABA, completed treatment</option>
+                        <option value="previous_ongoing">Currently receiving or recently received ABA</option>
+                        <option value="previous_interrupted">Previous ABA interrupted/discontinued</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        If previously received ABA, approximate hours per week
+                    </label>
+                    <input type="number" name="previous_hours" min="0" max="40" placeholder="Hours per week">
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Other Current Therapies/Services
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="other_services" value="speech">
+                            <span>Speech-Language Therapy</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="other_services" value="ot">
+                            <span>Occupational Therapy</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="other_services" value="pt">
+                            <span>Physical Therapy</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="other_services" value="counseling">
+                            <span>Mental Health Counseling</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="other_services" value="social_skills">
+                            <span>Social Skills Groups</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="other_services" value="medication">
+                            <span>Psychiatric Medication Management</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 6: Family & Environmental Factors -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">6</span>
+                    Family & Environmental Context
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Family Availability for Parent Training <span class="required">*</span>
+                    </label>
+                    <select name="parent_availability" required>
+                        <option value="">Select...</option>
+                        <option value="high">High - Family highly engaged and available</option>
+                        <option value="moderate">Moderate - Family available with some constraints</option>
+                        <option value="limited">Limited - Significant barriers to participation</option>
+                        <option value="minimal">Minimal - Very limited family involvement possible</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Number of Additional Siblings in Home
+                    </label>
+                    <input type="number" name="siblings" min="0" max="10" placeholder="Number of siblings">
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Primary Language Spoken at Home <span class="required">*</span>
+                    </label>
+                    <select name="home_language" required>
+                        <option value="">Select...</option>
+                        <option value="english_only">English only</option>
+                        <option value="bilingual_english_primary">Bilingual (English primary)</option>
+                        <option value="bilingual_other_primary">Bilingual (Other language primary)</option>
+                        <option value="other_only">Other language only</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Section 7: Caregiver Burden Assessment -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">7</span>
+                    Caregiver Burden & Stress Assessment
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Caregiver's ability to manage child's daily care needs <span class="required">*</span>
+                    </label>
+                    <select name="caregiver_daily_management" required>
+                        <option value="">Select...</option>
+                        <option value="independent">Caregiver manages independently with confidence</option>
+                        <option value="mostly_independent">Manages most tasks with occasional difficulty</option>
+                        <option value="frequent_difficulty">Frequent difficulty managing daily care</option>
+                        <option value="requires_constant_support">Requires constant support from others</option>
+                        <option value="overwhelmed">Caregiver is overwhelmed and unable to meet needs</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Impact on caregiver's physical health <span class="required">*</span>
+                    </label>
+                    <select name="caregiver_physical_health" required>
+                        <option value="">Select...</option>
+                        <option value="no_impact">No significant impact</option>
+                        <option value="mild_impact">Mild impact (fatigue, minor stress-related symptoms)</option>
+                        <option value="moderate_impact">Moderate impact (sleep disruption, frequent exhaustion)</option>
+                        <option value="significant_impact">Significant impact (chronic health problems developing)</option>
+                        <option value="severe_impact">Severe impact (serious health conditions related to caregiving)</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Impact on caregiver's mental/emotional health <span class="required">*</span>
+                    </label>
+                    <select name="caregiver_mental_health" required>
+                        <option value="">Select...</option>
+                        <option value="resilient">Caregiver is resilient and coping well</option>
+                        <option value="mild_stress">Mild stress but managing effectively</option>
+                        <option value="moderate_stress">Moderate stress, anxiety, or depression symptoms</option>
+                        <option value="high_stress">High stress, significant anxiety/depression</option>
+                        <option value="crisis">Crisis level - caregiver mental health seriously compromised</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Impact on family relationships and siblings <span class="required">*</span>
+                    </label>
+                    <select name="family_relationship_impact" required>
+                        <option value="">Select...</option>
+                        <option value="minimal">Minimal impact on family dynamics</option>
+                        <option value="some_strain">Some strain but family is managing</option>
+                        <option value="moderate_strain">Moderate strain on relationships</option>
+                        <option value="significant_strain">Significant strain, affecting sibling or marital relationships</option>
+                        <option value="severe_disruption">Severe disruption to family functioning</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Caregiver's employment/work status impact <span class="required">*</span>
+                    </label>
+                    <select name="caregiver_employment_impact" required>
+                        <option value="">Select...</option>
+                        <option value="no_impact">No impact on employment</option>
+                        <option value="minor_adjustments">Minor schedule adjustments needed</option>
+                        <option value="reduced_hours">Reduced work hours due to caregiving</option>
+                        <option value="left_workforce">Had to leave workforce</option>
+                        <option value="unable_to_work">Unable to maintain any employment</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Financial burden of child's needs <span class="required">*</span>
+                    </label>
+                    <select name="financial_burden" required>
+                        <option value="">Select...</option>
+                        <option value="manageable">Financially manageable</option>
+                        <option value="some_strain">Some financial strain</option>
+                        <option value="moderate_hardship">Moderate financial hardship</option>
+                        <option value="significant_hardship">Significant financial hardship</option>
+                        <option value="severe_crisis">Severe financial crisis</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Social isolation of caregiver <span class="required">*</span>
+                    </label>
+                    <select name="caregiver_isolation" required>
+                        <option value="">Select...</option>
+                        <option value="connected">Well-connected with support network</option>
+                        <option value="somewhat_isolated">Somewhat isolated but has some support</option>
+                        <option value="moderately_isolated">Moderately isolated, limited social contact</option>
+                        <option value="very_isolated">Very isolated, minimal support network</option>
+                        <option value="completely_isolated">Completely isolated with no support</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Respite care availability <span class="required">*</span>
+                    </label>
+                    <select name="respite_availability" required>
+                        <option value="">Select...</option>
+                        <option value="regular_respite">Regular respite care available</option>
+                        <option value="occasional_respite">Occasional respite available</option>
+                        <option value="minimal_respite">Minimal respite (rare breaks)</option>
+                        <option value="no_respite">No respite care available</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Overall Caregiver Burden Level <span class="required">*</span>
+                    </label>
+                    <select name="overall_caregiver_burden" required>
+                        <option value="">Select overall burden...</option>
+                        <option value="low">Low burden - Family is coping well</option>
+                        <option value="mild">Mild burden - Manageable with current resources</option>
+                        <option value="moderate">Moderate burden - Family needs additional support</option>
+                        <option value="high">High burden - Family is struggling significantly</option>
+                        <option value="severe">Severe burden - Family is in crisis</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Section 8: Goals & Treatment Planning -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">8</span>
+                    Treatment Priorities
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Top Priority Treatment Goals <span class="required">*</span>
+                    </label>
+                    <div class="helper-text">Select up to 3 highest priority areas</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="priority_goals" value="safety">
+                            <span>Safety/Crisis behavior reduction</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="priority_goals" value="communication">
+                            <span>Functional communication</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="priority_goals" value="independence">
+                            <span>Independence in daily living</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="priority_goals" value="social">
+                            <span>Social interaction skills</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="priority_goals" value="academic">
+                            <span>Academic/school readiness</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="priority_goals" value="community">
+                            <span>Community participation</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Expected Duration of Treatment Episode <span class="required">*</span>
+                    </label>
+                    <select name="treatment_duration" required>
+                        <option value="">Select...</option>
+                        <option value="short">Short-term (3-6 months)</option>
+                        <option value="moderate">Moderate (6-12 months)</option>
+                        <option value="extended">Extended (12-24 months)</option>
+                        <option value="ongoing">Ongoing/long-term (2+ years)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Section 9: Service Delivery Preferences -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">9</span>
+                    Service Delivery
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Preferred Service Setting <span class="required">*</span>
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="service_setting" value="home" required>
+                            <span>Home-based</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="service_setting" value="clinic">
+                            <span>Clinic-based</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="service_setting" value="school">
+                            <span>School-based</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="service_setting" value="community">
+                            <span>Community-based</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="service_setting" value="telehealth">
+                            <span>Telehealth</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Insurance/Payer Type <span class="required">*</span>
+                    </label>
+                    <select name="insurance_type" required>
+                        <option value="">Select payer...</option>
+                        <option value="commercial">Commercial Insurance</option>
+                        <option value="medicaid">Medicaid</option>
+                        <option value="tricare">TRICARE</option>
+                        <option value="medicare">Medicare</option>
+                        <option value="private_pay">Private Pay</option>
+                        <option value="school_district">School District Funded</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Section 10: Risk Score Assessment -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">10</span>
+                    Risk Assessment
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Risk of harm to self <span class="required">*</span>
+                    </label>
+                    <select name="risk_self_harm" required>
+                        <option value="">Select risk level...</option>
+                        <option value="0">No risk - No self-injurious behaviors</option>
+                        <option value="1">Low risk - Mild SIB without injury (e.g., hand mouthing, mild head hitting)</option>
+                        <option value="2">Moderate risk - SIB causing minor injuries (bruising, redness)</option>
+                        <option value="3">High risk - SIB causing tissue damage or requiring medical attention</option>
+                        <option value="4">Severe risk - Life-threatening SIB requiring emergency intervention</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Risk of harm to others <span class="required">*</span>
+                    </label>
+                    <select name="risk_harm_others" required>
+                        <option value="">Select risk level...</option>
+                        <option value="0">No risk - No aggressive behaviors</option>
+                        <option value="1">Low risk - Mild aggression without injury (pushing, grabbing)</option>
+                        <option value="2">Moderate risk - Aggression causing minor injuries to others</option>
+                        <option value="3">High risk - Aggression causing significant injury</option>
+                        <option value="4">Severe risk - Aggression requiring emergency services or hospitalization</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Elopement/wandering risk <span class="required">*</span>
+                    </label>
+                    <select name="risk_elopement" required>
+                        <option value="">Select risk level...</option>
+                        <option value="0">No risk - Does not elope</option>
+                        <option value="1">Low risk - Attempts to leave but responds to redirection</option>
+                        <option value="2">Moderate risk - Elopes occasionally, requires supervision</option>
+                        <option value="3">High risk - Frequent elopement, requires constant vigilance</option>
+                        <option value="4">Severe risk - Elopement with life-threatening potential (traffic, water, etc.)</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Risk related to lack of safety awareness <span class="required">*</span>
+                    </label>
+                    <select name="risk_safety_awareness" required>
+                        <option value="">Select risk level...</option>
+                        <option value="0">No risk - Age-appropriate safety awareness</option>
+                        <option value="1">Low risk - Minor safety concerns, mostly supervised</option>
+                        <option value="2">Moderate risk - Lacks stranger danger, traffic awareness</option>
+                        <option value="3">High risk - No safety awareness, puts objects in mouth, climbs dangerously</option>
+                        <option value="4">Severe risk - Complete lack of safety awareness with multiple dangers</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Risk of restrictive placement <span class="required">*</span>
+                    </label>
+                    <select name="risk_placement" required>
+                        <option value="">Select risk level...</option>
+                        <option value="0">No risk - Stable in current placement</option>
+                        <option value="1">Low risk - Current placement stable with supports</option>
+                        <option value="2">Moderate risk - Placement concerns, may need more intensive setting</option>
+                        <option value="3">High risk - Imminent risk of more restrictive placement</option>
+                        <option value="4">Severe risk - Currently in crisis, placement disruption likely</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Medical complexity/fragility <span class="required">*</span>
+                    </label>
+                    <select name="risk_medical" required>
+                        <option value="">Select complexity...</option>
+                        <option value="0">No medical complexity</option>
+                        <option value="1">Minor medical needs (controlled with medication)</option>
+                        <option value="2">Moderate complexity (multiple medications, some monitoring needed)</option>
+                        <option value="3">High complexity (g-tube, seizure disorder, frequent medical issues)</option>
+                        <option value="4">Severe complexity (life-threatening conditions, extensive medical needs)</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Prior psychiatric hospitalizations or crisis interventions
+                    </label>
+                    <select name="prior_hospitalizations">
+                        <option value="">Select...</option>
+                        <option value="none">None</option>
+                        <option value="one">One hospitalization</option>
+                        <option value="multiple">Multiple hospitalizations</option>
+                        <option value="recent">Recent hospitalization (within 6 months)</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label class="question-label">
+                        History of service termination due to behaviors
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="service_termination" value="no">
+                            <span>No prior service terminations</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="service_termination" value="yes">
+                            <span>Previous services terminated due to behavior severity</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 11: Additional Information -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">11</span>
+                    Additional Clinical Information
+                </h2>
+                
+                <div class="question">
+                    <label class="question-label">
+                        Additional factors affecting treatment recommendations
+                    </label>
+                    <textarea name="additional_info" placeholder="Include any medical conditions, medication side effects, family circumstances, or other relevant factors..."></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">Generate Recommendations</button>
+        </form>
+        
+        <div class="results" id="results">
+            <h2>Medical Necessity Recommendations</h2>
+            <div id="recommendationContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('assessmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = {};
+            
+            // Process form data
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    if (Array.isArray(data[key])) {
+                        data[key].push(value);
+                    } else {
+                        data[key] = [data[key], value];
+                    }
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // Calculate recommendations based on inputs
+            const recommendations = calculateRecommendations(data);
+            
+            // Display results
+            displayResults(recommendations);
+        });
+        
+        function calculateRecommendations(data) {
+            let recommendedHours = 0;
+            let recommendedGoals = 0;
+            let rationale = [];
+            
+            // Base hours on age
+            const age = parseInt(data.age);
+            if (age <= 3) {
+                recommendedHours = 15;
+                recommendedGoals = 3;
+            } else if (age <= 6) {
+                recommendedHours = 20;
+                recommendedGoals = 4;
+            } else if (age <= 12) {
+                recommendedHours = 15;
+                recommendedGoals = 5;
+            } else {
+                recommendedHours = 10;
+                recommendedGoals = 4;
+            }
+            
+            // Adjust for diagnosis severity
+            if (data.primary_diagnosis === 'asd_level3') {
+                recommendedHours += 10;
+                recommendedGoals += 2;
+                rationale.push('Level 3 ASD requires intensive intervention');
+            } else if (data.primary_diagnosis === 'asd_level2') {
+                recommendedHours += 5;
+                recommendedGoals += 1;
+                rationale.push('Level 2 ASD requires substantial support');
+            }
+            
+            // Adjust for adaptive functioning
+            const adaptiveScore = parseInt(data.adaptive_score);
+            if (adaptiveScore < 70) {
+                recommendedHours += 5;
+                recommendedGoals += 1;
+                rationale.push('Significant adaptive deficits warrant increased intensity');
+            }
+            
+            // Adjust for behavior severity
+            if (data.behavior_severity === 'crisis') {
+                recommendedHours += 10;
+                recommendedGoals += 2;
+                rationale.push('Crisis-level behaviors require intensive behavior intervention');
+            } else if (data.behavior_severity === 'severe') {
+                recommendedHours += 5;
+                recommendedGoals += 1;
+                rationale.push('Severe behaviors impact safety and learning');
+            } else if (data.behavior_severity === 'moderate') {
+                recommendedHours += 3;
+                rationale.push('Moderate behaviors interfere with skill acquisition');
+            }
+            
+            // Count skill deficit areas
+            const skillDeficits = Array.isArray(data.skill_deficits) ? data.skill_deficits.length : (data.skill_deficits ? 1 : 0);
+            if (skillDeficits >= 5) {
+                recommendedGoals += 2;
+                recommendedHours += 3;
+                rationale.push('Multiple domains of significant deficit');
+            } else if (skillDeficits >= 3) {
+                recommendedGoals += 1;
+                rationale.push('Several areas requiring intervention');
+            }
+            
+            // Adjust for previous services
+            if (data.previous_aba === 'none') {
+                recommendedHours += 3;
+                rationale.push('New to ABA services - building foundational skills');
+            }
+            
+            // Adjust for family availability
+            if (data.parent_availability === 'limited' || data.parent_availability === 'minimal') {
+                recommendedHours += 2;
+                rationale.push('Limited family training availability requires more direct service');
+            }
+            
+            // Cap at reasonable maximums
+            recommendedHours = Math.min(recommendedHours, 40);
+            recommendedGoals = Math.min(recommendedGoals, 10);
+            recommendedGoals = Math.max(recommendedGoals, 2);
+            
+            return {
+                hours: recommendedHours,
+                goals: recommendedGoals,
+                rationale: rationale,
+                supervisonHours: Math.ceil(recommendedHours * 0.1), // 10% supervision
+                parentTrainingHours: data.parent_availability !== 'minimal' ? 2 : 0
+            };
+        }
+        
+        function displayResults(recommendations) {
+            const resultsDiv = document.getElementById('results');
+            const contentDiv = document.getElementById('recommendationContent');
+            
+            let html = `
+                <div class="recommendation">
+                    <h3>Recommended Direct ABA Hours</h3>
+                    <p><strong>${recommendations.hours} hours per week</strong></p>
+                    <p>This includes ${recommendations.supervisonHours} hours of BCBA supervision monthly</p>
+                </div>
+                
+                <div class="recommendation">
+                    <h3>Recommended Number of Treatment Goals</h3>
+                    <p><strong>${recommendations.goals} primary treatment goals</strong></p>
+                    <p>Goals should span multiple domains of functioning</p>
+                </div>
+                
+                <div class="recommendation">
+                    <h3>Parent Training Recommendation</h3>
+                    <p><strong>${recommendations.parentTrainingHours} hours per month</strong></p>
+                    <p>Parent/caregiver training to support generalization</p>
+                </div>
+                
+                <div class="recommendation">
+                    <h3>Clinical Rationale</h3>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+            `;
+            
+            recommendations.rationale.forEach(reason => {
+                html += `<li style="margin-bottom: 8px;">${reason}</li>`;
+            });
+            
+            html += `
+                    </ul>
+                </div>
+                
+                <div class="recommendation">
+                    <h3>Note</h3>
+                    <p style="color: #718096; font-size: 14px;">These are initial recommendations based on assessment data. Final authorization should be determined through clinical judgment, payer guidelines, and ongoing assessment. Dosage should be reviewed regularly and adjusted based on client progress.</p>
+                </div>
+            `;
+            
+            contentDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
