@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABA Medical Necessity Calculator — System Architecture</title>
+<style>
+  @page { size: A4 landscape; margin: 1.5cm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #1e293b; background: #f8fafc; line-height: 1.6; padding: 2rem; }
+  .page { max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 2rem; color: #0f172a; margin-bottom: 0.25rem; }
+  h1 span { color: #2563eb; }
+  .subtitle { color: #64748b; font-size: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
+  h2 { font-size: 1.35rem; color: #1e40af; margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 2px solid #dbeafe; }
+  h3 { font-size: 1.1rem; color: #1e3a5f; margin: 1.2rem 0 0.6rem; }
+  p, li { font-size: 0.92rem; }
+  ul { padding-left: 1.5rem; margin-bottom: 0.8rem; }
+  li { margin-bottom: 0.3rem; }
+  code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; color: #7c3aed; }
+
+  /* Diagram containers */
+  .diagram-box { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin: 1rem 0 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow-x: auto; }
+  .diagram-box svg { max-width: 100%; }
+
+  /* Architecture Diagram - custom CSS-based */
+  .arch-grid { display: grid; gap: 1rem; }
+  .tier { border-radius: 10px; padding: 1rem 1.2rem; }
+  .tier-label { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem; }
+  .tier-client { background: #eff6ff; border: 2px solid #93c5fd; }
+  .tier-client .tier-label { color: #1d4ed8; }
+  .tier-api { background: #f0fdf4; border: 2px solid #86efac; }
+  .tier-api .tier-label { color: #16a34a; }
+  .tier-data { background: #fef3c7; border: 2px solid #fcd34d; }
+  .tier-data .tier-label { color: #a16207; }
+  .tier-infra { background: #fce7f3; border: 2px solid #f9a8d4; }
+  .tier-infra .tier-label { color: #be185d; }
+
+  .boxes { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .box { background: white; border: 1px solid #d1d5db; border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.82rem; min-width: 120px; }
+  .box strong { display: block; font-size: 0.78rem; color: #374151; }
+  .box span { font-size: 0.72rem; color: #6b7280; }
+
+  /* Flow arrows - text representation */
+  .flow-arrow { text-align: center; color: #9ca3af; font-size: 1.4rem; margin: 0.3rem 0; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.85rem; }
+  th { background: #f1f5f9; color: #475569; font-weight: 600; text-align: left; padding: 0.6rem 0.8rem; border-bottom: 2px solid #e2e8f0; }
+  td { padding: 0.5rem 0.8rem; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  tr:hover td { background: #f8fafc; }
+
+  /* File tree */
+  .file-tree { font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace; font-size: 0.8rem; background: #1e293b; color: #e2e8f0; padding: 1.2rem; border-radius: 10px; line-height: 1.7; }
+  .file-tree .dir { color: #60a5fa; }
+  .file-tree .file { color: #a5b4fc; }
+  .file-tree .comment { color: #64748b; }
+
+  /* Sequence / Flow */
+  .flow-step { display: flex; align-items: flex-start; gap: 0.8rem; margin: 0.6rem 0; }
+  .step-num { background: #2563eb; color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0; }
+  .step-content { flex: 1; }
+  .step-content strong { color: #1e40af; }
+
+  /* Dual-column layout */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* Print */
+  @media print {
+    body { background: white; padding: 0; }
+    .diagram-box { break-inside: avoid; box-shadow: none; }
+    .tier { break-inside: avoid; }
+    h2 { break-after: avoid; }
+  }
+
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
+  .tag-react { background: #dbeafe; color: #1e40af; }
+  .tag-ts { background: #e0e7ff; color: #4338ca; }
+  .tag-node { background: #dcfce7; color: #166534; }
+  .tag-db { background: #fef9c3; color: #854d0e; }
+  .tag-vercel { background: #f3e8ff; color: #7e22ce; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ===== HEADER ===== -->
+<h1>ABA Medical Necessity Calculator — <span>System Architecture</span></h1>
+<p class="subtitle">End-to-End Technical Architecture Document &bull; Demo Prototype &bull; v1.0</p>
+
+<!-- ===== 1. HIGH-LEVEL OVERVIEW ===== -->
+<h2>1. High-Level System Overview</h2>
+<p>The ABA Medical Necessity Calculator is a <strong>dual-tenant, full-stack web application</strong> with two distinct user portals (Clinic and Insurance) sharing a common API backend and database.</p>
+
+<div class="diagram-box">
+  <div class="arch-grid">
+
+    <!-- Client Tier -->
+    <div class="tier tier-client">
+      <div class="tier-label">&#x1F310; Client Tier — Browser</div>
+      <div class="boxes">
+        <div class="box"><strong>LoginScreen</strong><span>Role selection (Clinic / Insurance)</span></div>
+        <div class="box"><strong>Clinic Portal</strong><span>Calculator, Claims, Insights</span></div>
+        <div class="box"><strong>Insurance Portal</strong><span>Queue, Policy Calc, Decisions, Config</span></div>
+        <div class="box"><strong>Shared Components</strong><span>Layout, Field, Badge, Meter, etc.</span></div>
+        <div class="box"><strong>Zustand Stores</strong><span>authStore, claimStore</span></div>
+        <div class="box"><strong>Core Libraries</strong><span>calculator.ts, mlPredictor.ts, api.ts</span></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">&#x2B07; HTTP REST (JSON) via fetch &nbsp;&nbsp;|&nbsp;&nbsp; /api/* &#x2B07;</div>
+
+    <!-- API Tier -->
+    <div class="tier tier-api">
+      <div class="tier-label">&#x2699;&#xFE0F; API Tier — Express.js Server</div>
+      <div class="boxes">
+        <div class="box"><strong>Express App</strong><span>CORS, JSON middleware</span></div>
+        <div class="box"><strong>/api/claims</strong><span>GET, POST, PATCH</span></div>
+        <div class="box"><strong>/api/patients</strong><span>GET, POST</span></div>
+        <div class="box"><strong>/api/analytics</strong><span>GET (aggregations)</span></div>
+        <div class="box"><strong>/api/payer-profiles</strong><span>GET, PUT</span></div>
+        <div class="box"><strong>/api/health</strong><span>Health check</span></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">&#x2B07; Dual-Mode DB Client (async interface) &#x2B07;</div>
+
+    <!-- Data Tier -->
+    <div class="tier tier-data">
+      <div class="tier-label">&#x1F4BE; Data Tier — SQLite / Turso</div>
+      <div class="boxes">
+        <div class="box"><strong>patients</strong><span>id, name, age, diagnosis, settings</span></div>
+        <div class="box"><strong>claims</strong><span>id, patient, status, assessment, calc_result, ml_prediction</span></div>
+        <div class="box"><strong>payer_profiles</strong><span>id, name, weights, multipliers, ranges</span></div>
+        <div class="box"><strong>audit_log</strong><span>entity_type, action, details, user_role</span></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">&#x2B07; Deployment Target &#x2B07;</div>
+
+    <!-- Infra Tier -->
+    <div class="tier tier-infra">
+      <div class="tier-label">&#x2601;&#xFE0F; Infrastructure Tier — Vercel + Turso</div>
+      <div class="boxes">
+        <div class="box"><strong>Vercel CDN</strong><span>Static React build (dist/)</span></div>
+        <div class="box"><strong>Vercel Serverless</strong><span>api/index.ts → Express handler</span></div>
+        <div class="box"><strong>Turso Cloud</strong><span>libSQL — remote SQLite</span></div>
+        <div class="box"><strong>Local Dev</strong><span>better-sqlite3 file:aba.db</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== 2. TECHNOLOGY STACK ===== -->
+<h2>2. Technology Stack</h2>
+<div class="two-col">
+  <div>
+    <h3>Frontend</h3>
+    <table>
+      <tr><td><strong>Framework</strong></td><td>React 19 <span class="tag tag-react">React</span></td></tr>
+      <tr><td><strong>Build Tool</strong></td><td>Vite 7</td></tr>
+      <tr><td><strong>Language</strong></td><td>TypeScript <span class="tag tag-ts">TS</span></td></tr>
+      <tr><td><strong>Styling</strong></td><td>Tailwind CSS 4</td></tr>
+      <tr><td><strong>State Mgmt</strong></td><td>Zustand</td></tr>
+      <tr><td><strong>Icons</strong></td><td>Lucide React</td></tr>
+      <tr><td><strong>Routing</strong></td><td>Role-based conditional rendering</td></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Backend</h3>
+    <table>
+      <tr><td><strong>Runtime</strong></td><td>Node.js <span class="tag tag-node">Node</span></td></tr>
+      <tr><td><strong>Framework</strong></td><td>Express.js</td></tr>
+      <tr><td><strong>Language</strong></td><td>TypeScript (tsx runner)</td></tr>
+      <tr><td><strong>DB (Local)</strong></td><td>better-sqlite3 <span class="tag tag-db">SQLite</span></td></tr>
+      <tr><td><strong>DB (Cloud)</strong></td><td>@libsql/client (Turso)</td></tr>
+      <tr><td><strong>Hosting</strong></td><td>Vercel Serverless <span class="tag tag-vercel">Vercel</span></td></tr>
+      <tr><td><strong>IDs</strong></td><td>uuid v4</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 3. PROJECT STRUCTURE ===== -->
+<h2>3. Project File Structure</h2>
+<div class="diagram-box">
+<div class="file-tree">
+<span class="dir">aba-calc-v2/</span><br>
+├── <span class="dir">api/</span> <span class="comment">................... Vercel serverless entry point</span><br>
+│&nbsp;&nbsp; └── <span class="file">index.ts</span> <span class="comment">............ Express handler wrapper (cold-start DB init)</span><br>
+├── <span class="dir">server/</span> <span class="comment">................. Backend API</span><br>
+│&nbsp;&nbsp; ├── <span class="file">index.ts</span> <span class="comment">............ Express app + server bootstrap</span><br>
+│&nbsp;&nbsp; ├── <span class="dir">db/</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">index.ts</span> <span class="comment">........ Dual-mode DbClient (Turso / better-sqlite3)</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">schema.ts</span> <span class="comment">....... CREATE TABLE statements (4 tables)</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; └── <span class="file">seed.ts</span> <span class="comment">......... Demo data seeder (5 patients, 3 profiles, 4 claims)</span><br>
+│&nbsp;&nbsp; └── <span class="dir">routes/</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="file">claims.ts</span> <span class="comment">....... CRUD + status workflow</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="file">patients.ts</span> <span class="comment">..... CRUD</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="file">analytics.ts</span> <span class="comment">.... Aggregate statistics</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── <span class="file">payerProfiles.ts</span> <span class="comment"> Read + update payer configs</span><br>
+├── <span class="dir">src/</span> <span class="comment">.................... Frontend React app</span><br>
+│&nbsp;&nbsp; ├── <span class="file">main.tsx</span> <span class="comment">............ React DOM entry</span><br>
+│&nbsp;&nbsp; ├── <span class="file">App.tsx</span> <span class="comment">............. Role-based routing (Login → Clinic | Insurance)</span><br>
+│&nbsp;&nbsp; ├── <span class="file">index.css</span> <span class="comment">........... Tailwind directives + CSS custom properties</span><br>
+│&nbsp;&nbsp; ├── <span class="dir">lib/</span> <span class="comment">................ Core business logic</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">calculator.ts</span> <span class="comment">... 7-step dosage determination engine</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">mlPredictor.ts</span> <span class="comment">.. Simulated ML approval predictor</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; └── <span class="file">api.ts</span> <span class="comment">.......... REST API client (fetch wrapper)</span><br>
+│&nbsp;&nbsp; ├── <span class="dir">stores/</span> <span class="comment">............. Zustand state management</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">authStore.ts</span> <span class="comment">.... Role state (clinic | insurance | null)</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; └── <span class="file">claimStore.ts</span> <span class="comment">... Claims list + CRUD actions</span><br>
+│&nbsp;&nbsp; ├── <span class="dir">components/</span> <span class="comment">......... Shared UI primitives (9 components)</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">Layout.tsx</span> <span class="comment">...... App shell (header, sidebar, content)</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">Field.tsx</span> <span class="comment">....... Form field (input, select, textarea)</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">Section.tsx</span> <span class="comment">..... Collapsible form section</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">RatingRow.tsx</span> <span class="comment">... 0-4 severity rating input</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">Badge.tsx</span> <span class="comment">....... Status badge (approved, denied, etc.)</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">Meter.tsx</span> <span class="comment">....... Visual gauge (probability, hours)</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">Chips.tsx</span> <span class="comment">....... Multi-select tag chips</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">TabBar.tsx</span> <span class="comment">...... Tab navigation</span><br>
+│&nbsp;&nbsp; │&nbsp;&nbsp; └── <span class="file">StatCard.tsx</span> <span class="comment">.... Metric display card</span><br>
+│&nbsp;&nbsp; └── <span class="dir">features/</span> <span class="comment">........... Feature modules (portal-specific)</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="dir">auth/</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │&nbsp;&nbsp; └── <span class="file">LoginScreen.tsx</span> <span class="comment"> Role selection screen</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="dir">clinic/</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">ClinicPortal.tsx</span> <span class="comment"> Portal shell + tab routing</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">CalculatorTab.tsx</span> <span class="comment"> 7-step assessment form + results</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │&nbsp;&nbsp; ├── <span class="file">ClaimsTab.tsx</span> <span class="comment">... Claims list + submission</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │&nbsp;&nbsp; └── <span class="file">InsightsTab.tsx</span> <span class="comment">. Analytics dashboard</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── <span class="dir">insurance/</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="file">InsurancePortal.tsx</span> <span class="comment"> Portal shell + tab routing</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="file">QueueTab.tsx</span> <span class="comment">.... Review queue (pending claims)</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="file">PolicyCalcTab.tsx</span> <span class="comment"> Insurance-side calculator</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="file">DecisionsTab.tsx</span> <span class="comment">. Decision history</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── <span class="file">PolicyConfigTab.tsx</span> <span class="comment"> Payer profile editor</span><br>
+├── <span class="file">vercel.json</span> <span class="comment">............ Vercel deployment config</span><br>
+├── <span class="file">vite.config.ts</span> <span class="comment">......... Vite config (React plugin, API proxy)</span><br>
+├── <span class="file">tsconfig.json</span> <span class="comment">.......... TypeScript project references</span><br>
+├── <span class="file">package.json</span> <span class="comment">........... Dependencies + scripts</span><br>
+└── <span class="file">index.html</span> <span class="comment">............. SPA entry point</span>
+</div>
+</div>
+
+<!-- ===== 4. DUAL-PORTAL ARCHITECTURE ===== -->
+<h2>4. Dual-Portal Architecture</h2>
+<p>The app serves two distinct user roles through a single codebase with <strong>role-based conditional rendering</strong> (no client-side router needed).</p>
+
+<div class="diagram-box">
+  <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: start;">
+
+    <!-- Clinic Portal -->
+    <div class="tier tier-client" style="border-color: #60a5fa;">
+      <div class="tier-label" style="color: #1d4ed8;">&#x1F3E5; Clinic Portal</div>
+      <div style="font-size: 0.85rem;">
+        <p style="margin-bottom: 0.5rem;"><strong>Purpose:</strong> Clinical assessment, dosage calculation, claim submission</p>
+        <div class="boxes" style="flex-direction: column;">
+          <div class="box"><strong>Calculator Tab</strong><span>7-step assessment form → dosage engine → ML prediction → results panel</span></div>
+          <div class="box"><strong>Claims Tab</strong><span>Submit claims from calculator results; view claim history & statuses</span></div>
+          <div class="box"><strong>Insights Tab</strong><span>Analytics dashboard: totals, avg hours, approval rates, tier distribution</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center - shared -->
+    <div style="text-align: center; padding-top: 2rem;">
+      <div style="background: #f1f5f9; border-radius: 8px; padding: 0.8rem; font-size: 0.8rem; min-width: 100px;">
+        <strong>App.tsx</strong><br>
+        <span style="color: #64748b;">Role-based<br>rendering</span><br><br>
+        <strong>LoginScreen</strong><br>
+        <span style="color: #64748b;">role = null<br>→ Clinic<br>→ Insurance</span>
+      </div>
+    </div>
+
+    <!-- Insurance Portal -->
+    <div class="tier" style="background: #fefce8; border: 2px solid #fbbf24;">
+      <div class="tier-label" style="color: #a16207;">&#x1F3E6; Insurance Portal</div>
+      <div style="font-size: 0.85rem;">
+        <p style="margin-bottom: 0.5rem;"><strong>Purpose:</strong> Claim review, policy calculation, decisions, configuration</p>
+        <div class="boxes" style="flex-direction: column;">
+          <div class="box"><strong>Queue Tab</strong><span>Pending claims review queue with approve/deny/request-info actions</span></div>
+          <div class="box"><strong>Policy Calc Tab</strong><span>Insurance-side calculator using payer profile weights</span></div>
+          <div class="box"><strong>Decisions Tab</strong><span>Completed decisions history with notes and timestamps</span></div>
+          <div class="box"><strong>Policy Config Tab</strong><span>Edit payer profiles: weights, multipliers, hour ranges</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== 5. 7-STEP DOSAGE ENGINE ===== -->
+<h2>5. 7-Step Dosage Calculation Engine</h2>
+<p>The core algorithm in <code>src/lib/calculator.ts</code> follows a deterministic 7-step pipeline:</p>
+
+<div class="diagram-box">
+  <div class="flow-step"><div class="step-num">1</div><div class="step-content"><strong>FII Composite Score</strong> — Sum of 9 functional impairment domains (0-4 each) → FII score (0-36). Maps to base hours: 0-9→10h, 10-17→20h, 18-25→30h, 26-36→40h.</div></div>
+  <div class="flow-step"><div class="step-num">2</div><div class="step-content"><strong>Vineland Adjustment</strong> — Composite adaptive behavior score. Below 70: +8h, 70-84: +4h, 85+: +0h. Weighted by payer profile <code>vinW</code>.</div></div>
+  <div class="flow-step"><div class="step-num">3</div><div class="step-content"><strong>VB-MAPP Adjustment</strong> — Milestones, Barriers, Transitions scores. Milestones below 50: +5h, Barriers above 15: +3h. Weighted by <code>vbW</code>.</div></div>
+  <div class="flow-step"><div class="step-num">4</div><div class="step-content"><strong>Behavioral Adjustment</strong> — Aggression frequency (+2-6h), self-injury severity (+2-5h), elopement (+3h), crisis events (+2-5h). Weighted by <code>behW</code>.</div></div>
+  <div class="flow-step"><div class="step-num">5</div><div class="step-content"><strong>Environmental Modifiers</strong> — Each active modifier (school risk, CPS, regression, burnout, etc.) adds +2h. Weighted by <code>envW</code>.</div></div>
+  <div class="flow-step"><div class="step-num">6</div><div class="step-content"><strong>Age Multiplier</strong> — Age 2-6: ×1.2 (young), Age 7-12: ×1.0 (mid), Age 13+: ×0.85 (teen). Configurable per payer profile.</div></div>
+  <div class="flow-step"><div class="step-num">7</div><div class="step-content"><strong>Final Clamping + Derivations</strong> — Clamp to payer min/max hours. Derive supervision hours (<code>supPct × final</code>), parent training hours (from <code>ptRange</code>), goal count, risk score. Generate rationale strings.</div></div>
+</div>
+
+<div class="diagram-box" style="text-align: center; font-size: 0.85rem; padding: 1rem;">
+  <strong>Pipeline Flow:</strong><br><br>
+  <span style="background: #dbeafe; padding: 4px 10px; border-radius: 6px;">FII (9 domains)</span>
+  &nbsp;→&nbsp;
+  <span style="background: #dbeafe; padding: 4px 10px; border-radius: 6px;">Base Hours</span>
+  &nbsp;→&nbsp;
+  <span style="background: #dcfce7; padding: 4px 10px; border-radius: 6px;">+ Vineland Adj</span>
+  &nbsp;→&nbsp;
+  <span style="background: #dcfce7; padding: 4px 10px; border-radius: 6px;">+ VB-MAPP Adj</span>
+  &nbsp;→&nbsp;
+  <span style="background: #dcfce7; padding: 4px 10px; border-radius: 6px;">+ Behavioral Adj</span>
+  &nbsp;→&nbsp;
+  <span style="background: #dcfce7; padding: 4px 10px; border-radius: 6px;">+ Env Adj</span>
+  &nbsp;→&nbsp;
+  <span style="background: #fef9c3; padding: 4px 10px; border-radius: 6px;">× Age Mult</span>
+  &nbsp;→&nbsp;
+  <span style="background: #fce7f3; padding: 4px 10px; border-radius: 6px;">Clamp(min, max)</span>
+  &nbsp;→&nbsp;
+  <span style="background: #f3e8ff; padding: 4px 10px; border-radius: 6px; font-weight: 700;">Final Hours + Derivations</span>
+</div>
+
+<!-- ===== 6. ML PREDICTOR ===== -->
+<h2>6. Simulated ML Approval Predictor</h2>
+<p>The predictor in <code>src/lib/mlPredictor.ts</code> is a <strong>deterministic heuristic</strong> (not actual ML) that estimates approval probability based on data completeness and clinical indicators.</p>
+
+<div class="diagram-box">
+  <table>
+    <tr><th>Factor</th><th>Logic</th><th>Weight</th></tr>
+    <tr><td>Documentation completeness</td><td>% of assessment fields filled</td><td>+30 max</td></tr>
+    <tr><td>Clinical severity</td><td>FII score relative to hours requested</td><td>+25 max</td></tr>
+    <tr><td>Vineland alignment</td><td>Low composite supports higher hours</td><td>+15 max</td></tr>
+    <tr><td>Behavioral justification</td><td>Presence of aggression, SIB, elopement</td><td>+15 max</td></tr>
+    <tr><td>Age appropriateness</td><td>Hours align with age expectations</td><td>+10 max</td></tr>
+    <tr><td>Environmental factors</td><td>Active modifiers documented</td><td>+5 max</td></tr>
+  </table>
+  <p style="margin-top: 0.8rem; font-size: 0.85rem;">
+    <strong>Output:</strong> Probability (0-100%), Confidence (low/medium/high), Tier (likely-approve / borderline / likely-deny), Factor breakdown
+  </p>
+</div>
+
+<!-- ===== 7. DATABASE SCHEMA ===== -->
+<h2>7. Database Schema</h2>
+
+<div class="diagram-box">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div>
+      <h3 style="margin-top: 0;">patients</h3>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td><code>id</code></td><td>TEXT PK</td><td>e.g. "P-001"</td></tr>
+        <tr><td><code>name</code></td><td>TEXT</td><td>Full name</td></tr>
+        <tr><td><code>age</code></td><td>INTEGER</td><td></td></tr>
+        <tr><td><code>diagnosis</code></td><td>TEXT</td><td>autism, pdd, aspergers</td></tr>
+        <tr><td><code>diagnosis_code</code></td><td>TEXT</td><td>Default F84.0</td></tr>
+        <tr><td><code>educational_setting</code></td><td>TEXT</td><td></td></tr>
+        <tr><td><code>living_situation</code></td><td>TEXT</td><td></td></tr>
+        <tr><td><code>created_at</code></td><td>TEXT</td><td>ISO datetime</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-top: 0;">claims</h3>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td><code>id</code></td><td>TEXT PK</td><td>UUID</td></tr>
+        <tr><td><code>patient_id</code></td><td>TEXT FK</td><td>→ patients.id</td></tr>
+        <tr><td><code>status</code></td><td>TEXT</td><td>submitted → under_review → approved/denied</td></tr>
+        <tr><td><code>assessment_data</code></td><td>TEXT</td><td>JSON blob of form inputs</td></tr>
+        <tr><td><code>calc_result</code></td><td>TEXT</td><td>JSON blob of engine output</td></tr>
+        <tr><td><code>ml_prediction</code></td><td>TEXT</td><td>JSON blob of predictor output</td></tr>
+        <tr><td><code>recommended_hours</code></td><td>REAL</td><td>Engine-calculated</td></tr>
+        <tr><td><code>approved_hours</code></td><td>REAL</td><td>Set on approval</td></tr>
+        <tr><td><code>tier</code></td><td>INTEGER</td><td>1-4</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-top: 0;">payer_profiles</h3>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td><code>id</code></td><td>TEXT PK</td><td>e.g. "PP-001"</td></tr>
+        <tr><td><code>name</code></td><td>TEXT</td><td>Default, Conservative, Progressive</td></tr>
+        <tr><td><code>max/min_hours</code></td><td>REAL</td><td>Clamping range</td></tr>
+        <tr><td><code>fii/vin/vb/beh/env_w</code></td><td>REAL</td><td>Domain weights (0-2)</td></tr>
+        <tr><td><code>age_mult_*</code></td><td>REAL</td><td>young, mid, teen multipliers</td></tr>
+        <tr><td><code>sup_pct</code></td><td>REAL</td><td>Supervision %</td></tr>
+        <tr><td><code>pt_range_*</code></td><td>REAL</td><td>Parent training min/max</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-top: 0;">audit_log</h3>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td><code>id</code></td><td>INTEGER PK</td><td>Auto-increment</td></tr>
+        <tr><td><code>entity_type</code></td><td>TEXT</td><td>"claim"</td></tr>
+        <tr><td><code>entity_id</code></td><td>TEXT</td><td>UUID of entity</td></tr>
+        <tr><td><code>action</code></td><td>TEXT</td><td>created, status_approved, etc.</td></tr>
+        <tr><td><code>details</code></td><td>TEXT</td><td>JSON details</td></tr>
+        <tr><td><code>user_role</code></td><td>TEXT</td><td>clinic / insurance</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 8. API ENDPOINTS ===== -->
+<h2>8. REST API Endpoints</h2>
+<div class="diagram-box">
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Used By</th></tr>
+    <tr><td><code>GET</code></td><td><code>/api/claims</code></td><td>List all claims (sorted by created_at DESC)</td><td>Both portals</td></tr>
+    <tr><td><code>GET</code></td><td><code>/api/claims/:id</code></td><td>Get single claim detail</td><td>Both portals</td></tr>
+    <tr><td><code>POST</code></td><td><code>/api/claims</code></td><td>Create new claim (assessment + calc + ML data)</td><td>Clinic</td></tr>
+    <tr><td><code>PATCH</code></td><td><code>/api/claims/:id/status</code></td><td>Update claim status (approve/deny) + notes</td><td>Insurance</td></tr>
+    <tr><td><code>GET</code></td><td><code>/api/patients</code></td><td>List all patients</td><td>Clinic</td></tr>
+    <tr><td><code>GET</code></td><td><code>/api/patients/:id</code></td><td>Get single patient</td><td>Clinic</td></tr>
+    <tr><td><code>POST</code></td><td><code>/api/patients</code></td><td>Create new patient</td><td>Clinic</td></tr>
+    <tr><td><code>GET</code></td><td><code>/api/analytics</code></td><td>Aggregated stats (totals, averages, tier counts)</td><td>Both portals</td></tr>
+    <tr><td><code>GET</code></td><td><code>/api/payer-profiles</code></td><td>List all payer profiles</td><td>Insurance</td></tr>
+    <tr><td><code>GET</code></td><td><code>/api/payer-profiles/:id</code></td><td>Get single profile</td><td>Insurance</td></tr>
+    <tr><td><code>PUT</code></td><td><code>/api/payer-profiles/:id</code></td><td>Update profile weights/ranges</td><td>Insurance</td></tr>
+    <tr><td><code>GET</code></td><td><code>/api/health</code></td><td>Health check</td><td>Monitoring</td></tr>
+  </table>
+</div>
+
+<!-- ===== 9. CLAIMS WORKFLOW ===== -->
+<h2>9. End-to-End Claims Workflow</h2>
+<p>The complete lifecycle of a claim from clinical assessment to insurance decision:</p>
+
+<div class="diagram-box">
+  <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; justify-content: center; font-size: 0.82rem; margin-bottom: 1rem;">
+    <span style="background: #dbeafe; padding: 6px 14px; border-radius: 8px; border: 2px solid #93c5fd;">1. Fill Assessment Form</span>
+    <span style="color: #9ca3af;">→</span>
+    <span style="background: #dbeafe; padding: 6px 14px; border-radius: 8px; border: 2px solid #93c5fd;">2. Run 7-Step Engine</span>
+    <span style="color: #9ca3af;">→</span>
+    <span style="background: #e0e7ff; padding: 6px 14px; border-radius: 8px; border: 2px solid #a5b4fc;">3. ML Prediction</span>
+    <span style="color: #9ca3af;">→</span>
+    <span style="background: #dbeafe; padding: 6px 14px; border-radius: 8px; border: 2px solid #93c5fd;">4. Review Results</span>
+    <span style="color: #9ca3af;">→</span>
+    <span style="background: #dcfce7; padding: 6px 14px; border-radius: 8px; border: 2px solid #86efac;">5. Submit Claim</span>
+    <span style="color: #9ca3af;">→</span>
+    <span style="background: #fef9c3; padding: 6px 14px; border-radius: 8px; border: 2px solid #fcd34d;">6. Insurance Queue</span>
+    <span style="color: #9ca3af;">→</span>
+    <span style="background: #fef9c3; padding: 6px 14px; border-radius: 8px; border: 2px solid #fcd34d;">7. Review + Decide</span>
+    <span style="color: #9ca3af;">→</span>
+    <span style="background: #f3e8ff; padding: 6px 14px; border-radius: 8px; border: 2px solid #d8b4fe;">8. Audit Logged</span>
+  </div>
+
+  <div class="two-col" style="font-size: 0.85rem;">
+    <div>
+      <h3 style="color: #1d4ed8;">Clinic Side (Steps 1-5)</h3>
+      <ol style="padding-left: 1.5rem;">
+        <li><strong>CalculatorTab:</strong> Clinician fills patient demographics, FII domains, Vineland scores, VB-MAPP, behavioral data, environmental modifiers</li>
+        <li><strong>calculator.ts:</strong> Engine processes all inputs through 7-step pipeline → produces recommended hours, tier, rationale</li>
+        <li><strong>mlPredictor.ts:</strong> Analyzes completeness + severity → approval probability + confidence</li>
+        <li><strong>Results Panel:</strong> Displays hours, tier, ML prediction, breakdown, flags</li>
+        <li><strong>POST /api/claims:</strong> Submits claim (assessment_data, calc_result, ml_prediction as JSON)</li>
+      </ol>
+    </div>
+    <div>
+      <h3 style="color: #a16207;">Insurance Side (Steps 6-8)</h3>
+      <ol start="6" style="padding-left: 1.5rem;">
+        <li><strong>QueueTab:</strong> Claim appears in review queue with status "submitted"</li>
+        <li><strong>Review:</strong> Reviewer sees full assessment data, engine results, ML prediction. Can approve, deny, or request more info. Adds review notes.</li>
+        <li><strong>PATCH /api/claims/:id/status:</strong> Status updated → audit_log entry created → claim moves to DecisionsTab</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 10. STATE FLOW ===== -->
+<h2>10. Claim Status State Machine</h2>
+<div class="diagram-box" style="text-align: center;">
+  <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 0.85rem;">
+    <span style="background: #e0e7ff; padding: 8px 16px; border-radius: 8px; border: 2px solid #818cf8; font-weight: 600;">submitted</span>
+    <span style="color: #9ca3af; font-size: 1.2rem;">→</span>
+    <span style="background: #fef9c3; padding: 8px 16px; border-radius: 8px; border: 2px solid #fbbf24; font-weight: 600;">under_review</span>
+    <span style="color: #9ca3af; font-size: 1.2rem;">→</span>
+    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+      <span style="background: #dcfce7; padding: 8px 16px; border-radius: 8px; border: 2px solid #4ade80; font-weight: 600;">approved</span>
+      <span style="background: #fee2e2; padding: 8px 16px; border-radius: 8px; border: 2px solid #f87171; font-weight: 600;">denied</span>
+      <span style="background: #ffedd5; padding: 8px 16px; border-radius: 8px; border: 2px solid #fb923c; font-weight: 600;">info_requested</span>
+    </div>
+  </div>
+  <p style="margin-top: 1rem; font-size: 0.82rem; color: #64748b;">Each transition is recorded in <code>audit_log</code> with timestamp, action, details, and user role.</p>
+</div>
+
+<!-- ===== 11. DEPLOYMENT ===== -->
+<h2>11. Deployment Architecture</h2>
+
+<div class="diagram-box">
+  <div class="two-col">
+    <div>
+      <h3 style="margin-top: 0;">Local Development</h3>
+      <div style="font-size: 0.85rem;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.8rem; margin-bottom: 0.5rem;">
+          <strong>Vite Dev Server</strong> (port 5173)<br>
+          <span style="color: #64748b;">Hot-reload React app, proxies /api/* → :3001</span>
+        </div>
+        <div style="text-align: center; color: #9ca3af;">↕ proxy</div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.8rem; margin-bottom: 0.5rem;">
+          <strong>Express Server</strong> (port 3001)<br>
+          <span style="color: #64748b;">tsx runner, REST API, auto-init DB</span>
+        </div>
+        <div style="text-align: center; color: #9ca3af;">↕</div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.8rem;">
+          <strong>better-sqlite3</strong><br>
+          <span style="color: #64748b;">Local file: server/db/aba.db (WAL mode)</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-top: 0;">Vercel Production</h3>
+      <div style="font-size: 0.85rem;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.8rem; margin-bottom: 0.5rem;">
+          <strong>Vercel CDN (Edge)</strong><br>
+          <span style="color: #64748b;">Static dist/ (index.html, JS, CSS) — global CDN</span>
+        </div>
+        <div style="text-align: center; color: #9ca3af;">↕ /api/* rewrite</div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.8rem; margin-bottom: 0.5rem;">
+          <strong>Vercel Serverless Function</strong><br>
+          <span style="color: #64748b;">api/index.ts → Express handler (cold-start DB init)</span>
+        </div>
+        <div style="text-align: center; color: #9ca3af;">↕ libSQL (HTTP)</div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.8rem;">
+          <strong>Turso Cloud SQLite</strong><br>
+          <span style="color: #64748b;">@libsql/client → libsql://aba-calc-*.turso.io</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 12. DATA FLOW ===== -->
+<h2>12. Frontend Data Flow</h2>
+<div class="diagram-box" style="text-align: center; font-size: 0.85rem;">
+  <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: center; flex-wrap: wrap;">
+    <span style="background: #dbeafe; padding: 8px 14px; border-radius: 8px; border: 1px solid #93c5fd;"><strong>React Component</strong><br><span style="font-size: 0.75rem;">e.g. CalculatorTab</span></span>
+    <span style="color: #9ca3af;">→ dispatch →</span>
+    <span style="background: #e0e7ff; padding: 8px 14px; border-radius: 8px; border: 1px solid #a5b4fc;"><strong>Zustand Store</strong><br><span style="font-size: 0.75rem;">claimStore / authStore</span></span>
+    <span style="color: #9ca3af;">→ calls →</span>
+    <span style="background: #dcfce7; padding: 8px 14px; border-radius: 8px; border: 1px solid #86efac;"><strong>api.ts</strong><br><span style="font-size: 0.75rem;">fetch("/api/*")</span></span>
+    <span style="color: #9ca3af;">→ HTTP →</span>
+    <span style="background: #fef9c3; padding: 8px 14px; border-radius: 8px; border: 1px solid #fcd34d;"><strong>Express Route</strong><br><span style="font-size: 0.75rem;">server/routes/*</span></span>
+    <span style="color: #9ca3af;">→ query →</span>
+    <span style="background: #fce7f3; padding: 8px 14px; border-radius: 8px; border: 1px solid #f9a8d4;"><strong>DbClient</strong><br><span style="font-size: 0.75rem;">SQLite / Turso</span></span>
+  </div>
+  <p style="margin-top: 1rem; color: #64748b; font-size: 0.82rem;">
+    <strong>Note:</strong> The calculator engine and ML predictor run <em>entirely in the browser</em> (client-side). Only claim persistence uses the API.
+  </p>
+</div>
+
+<!-- ===== 13. SECURITY NOTES ===== -->
+<h2>13. Security &amp; Authentication (Demo Scope)</h2>
+<div class="diagram-box" style="font-size: 0.85rem;">
+  <ul>
+    <li><strong>Authentication:</strong> Simulated role selection (no real auth). In production, this would use OAuth 2.0 / OIDC with JWT tokens.</li>
+    <li><strong>Authorization:</strong> Role stored in Zustand (client-side only). No server-side role enforcement in the demo.</li>
+    <li><strong>Data isolation:</strong> Both portals share the same data. In production, row-level security would isolate tenant data.</li>
+    <li><strong>CORS:</strong> Open in demo (<code>cors()</code> with defaults). In production, restricted to specific origins.</li>
+    <li><strong>Input validation:</strong> Minimal in demo. Production would add Zod/Joi schemas on all API inputs.</li>
+    <li><strong>Audit logging:</strong> Functional — all claim creates and status changes are logged to <code>audit_log</code>.</li>
+  </ul>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="margin-top: 3rem; padding-top: 1rem; border-top: 2px solid #e2e8f0; color: #94a3b8; font-size: 0.8rem; text-align: center;">
+  ABA Medical Necessity Calculator — Architecture Document — Generated February 2026 — Demo Prototype v1.0
+</div>
+
+</div>
+</body>
+</html>
