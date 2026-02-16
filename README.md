@@ -1,73 +1,135 @@
-# React + TypeScript + Vite
+# ABA Medical Necessity Calculator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A dual-tenant, web-based decision support system for **Applied Behavior Analysis (ABA) therapy** dosage determination. The application assists two key stakeholders in the ABA authorization process:
 
-Currently, two official plugins are available:
+- **Provider Clinics** — Perform standardized clinical assessments, calculate recommended therapy hours using an evidence-based algorithm, and submit authorization claims.
+- **Insurance Payers** — Review submitted claims against configurable policy parameters, make approval/denial decisions, and maintain audit trails.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+> **Note:** This is a **demo prototype** built for demonstration and stakeholder review purposes. Authentication is simulated (role selection) and data is seeded for showcase.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## What Problem Does This Solve?
 
-## Expanding the ESLint configuration
+Determining the appropriate number of ABA therapy hours for a patient involves synthesizing data from multiple clinical instruments (FII, Vineland, VB-MAPP), behavioral observations, environmental factors, and patient demographics. This process is manual, inconsistent, and opaque.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+This tool **standardizes** that process through a transparent, reproducible **7-step dosage calculation engine** that both clinics and insurers can trust. It also includes a **simulated ML predictor** that estimates claim approval probability, helping clinics submit stronger documentation.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Key Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Feature | Description |
+|---|---|
+| **7-Step Dosage Engine** | Evidence-based algorithm incorporating FII scores, Vineland adaptive behavior, VB-MAPP milestones, behavioral severity, environmental modifiers, and age factors |
+| **Dual Portals** | Separate Clinic and Insurance experiences sharing a common backend |
+| **Claims Pipeline** | Full lifecycle: submit, review, approve/deny with notes and timestamps |
+| **ML Approval Predictor** | Deterministic heuristic estimating approval probability based on data completeness and clinical alignment |
+| **Configurable Payer Profiles** | Insurance-side weight tuning for each assessment domain, hour ranges, and age multipliers |
+| **Analytics Dashboard** | Aggregated statistics on claims volume, approval rates, average hours, and tier distribution |
+| **Audit Logging** | Every claim creation and status change is recorded with role, action, and details |
+
+---
+
+## Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React 19, TypeScript, Vite 7, Tailwind CSS 4, Zustand, Lucide Icons |
+| **Backend** | Node.js, Express 5, TypeScript (tsx runner) |
+| **Database** | SQLite via better-sqlite3 (local) / Turso via @libsql/client (cloud) |
+| **Deployment** | Vercel (static CDN + serverless functions) + Turso (cloud SQLite) |
+
+---
+
+## Project Structure
+
+```
+aba-calc-v2/
+├── api/                    # Vercel serverless entry point
+├── server/                 # Backend API
+│   ├── db/                 # Database layer (schema, seed, dual-mode client)
+│   └── routes/             # REST API route handlers (claims, patients, analytics, payer-profiles)
+├── src/                    # Frontend React application
+│   ├── lib/                # Core business logic (calculator engine, ML predictor, API client)
+│   ├── stores/             # Zustand state management (auth, claims)
+│   ├── components/         # Shared UI primitives (9 reusable components)
+│   └── features/           # Feature modules
+│       ├── auth/           # Login / role selection
+│       ├── clinic/         # Clinic Portal (Calculator, Claims, Insights tabs)
+│       └── insurance/      # Insurance Portal (Queue, Policy Calc, Decisions, Config tabs)
+├── contracts/              # Project contract and build plan
+├── docs/                   # Architecture diagram and business user guide
+├── mock app/               # Original single-file prototype (reference)
+├── ref docs/               # Source reference documents (BRD, survey, specifications)
+├── vercel.json             # Vercel deployment configuration
+└── vite.config.ts          # Vite build + dev proxy configuration
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Getting Started
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+
+- **Node.js** 18+ and **npm**
+
+### Install & Run
+
+```bash
+# Install dependencies
+npm install
+
+# Start both frontend and backend in development mode
+npm run dev
 ```
+
+This launches:
+- **Frontend** at `http://localhost:5173` (Vite dev server with hot reload)
+- **Backend API** at `http://localhost:3001` (Express, auto-creates and seeds the SQLite database)
+
+The Vite dev server proxies all `/api/*` requests to the backend automatically.
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+Outputs optimized static files to `dist/`.
+
+---
+
+## Documentation
+
+| Document | Location | Description |
+|---|---|---|
+| **Architecture Diagram** | `docs/ABA_Calculator_Architecture.html` | Detailed end-to-end technical architecture (open in browser, print to PDF) |
+| **Business User Guide** | `docs/ABA_Calculator_User_Guide.html` | Comprehensive navigation and usage guide for non-technical users |
+| **Project Contract** | `contracts/ABA_Medical_Necessity_Calculator_Contract.md` | Authoritative specification document |
+| **Build Plan** | `contracts/BUILD_PLAN_REVISED.md` | Detailed implementation plan |
+
+---
+
+## Deployment
+
+The app is configured for **Vercel + Turso** deployment:
+
+- **Frontend** is served as static files via Vercel's global CDN
+- **Backend API** runs as a Vercel serverless function (`api/index.ts`)
+- **Database** uses Turso (cloud-hosted SQLite) in production, with automatic fallback to local SQLite for development
+
+Environment variables required for production:
+
+| Variable | Description |
+|---|---|
+| `TURSO_URL` | Turso database URL (`libsql://...`) |
+| `TURSO_AUTH_TOKEN` | Turso authentication token |
+
+When these are not set, the app automatically uses a local SQLite file (`server/db/aba.db`).
+
+---
+
+## License
+
+Demo prototype — not licensed for production use.

@@ -20,32 +20,31 @@ export function Section({
   color = 'clinic',
 }: SectionProps) {
   const [open, setOpen] = useState(defaultOpen);
-  const borderColor = color === 'insurance' ? 'border-insur/30' : 'border-clinic/30';
-  const numColor = color === 'insurance' ? 'text-insur' : 'text-clinic';
+  const accentColor = color === 'insurance' ? 'text-primary' : 'text-secondary';
 
   return (
-    <div className={`bg-card rounded-xl border ${borderColor} overflow-hidden animate-fadeIn`}>
+    <div className="card animate-fadeIn !p-0 overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/[0.02] transition"
+        className="w-full flex items-center justify-between px-6 py-4 hover:bg-hover transition focus-ring rounded-t-xl"
       >
         <div className="flex items-center gap-3">
           {stepNumber !== undefined && (
-            <span className={`text-xs font-bold ${numColor} bg-bg rounded-full w-6 h-6 flex items-center justify-center`}>
+            <span className={`text-xs font-bold ${accentColor} bg-[#F0F4F8] rounded-full w-7 h-7 flex items-center justify-center`}>
               {stepNumber}
             </span>
           )}
-          <h3 className="text-base font-semibold text-text">{title}</h3>
+          <h3 className="text-base font-semibold text-subheading">{title}</h3>
           {badge}
         </div>
         {open ? (
-          <ChevronUp size={18} className="text-muted" />
+          <ChevronUp size={18} className="text-text-secondary" />
         ) : (
-          <ChevronDown size={18} className="text-muted" />
+          <ChevronDown size={18} className="text-text-secondary" />
         )}
       </button>
-      {open && <div className="px-5 pb-5">{children}</div>}
+      {open && <div className="px-6 pb-6 animate-slideDown">{children}</div>}
     </div>
   );
 }

@@ -5,341 +5,201 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ABA Medical Necessity Calculator — User Guide</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
   :root {
-    --bg: #0B0E14;
-    --card: #13161F;
-    --clinic: #3DDC84;
-    --insur: #A78BFA;
-    --text: #E4E8F1;
-    --muted: #7E879D;
-    --accent: #5E8BFF;
-    --danger: #FF5A5A;
-    --warn: #FFB84D;
-    --success: #3DDC84;
+    --primary: #0B6FA4;
+    --primary-light: #E1F0FA;
+    --primary-hover: #085A85;
+    --secondary: #00897B;
+    --secondary-light: #E0F2F1;
+    --success: #2E7D32;
+    --success-light: #E8F5E9;
+    --warning: #EF8C00;
+    --warning-light: #FFF3E0;
+    --critical: #C62828;
+    --critical-light: #FFEBEE;
+    --info: #0277BD;
+    --info-light: #E1F5FE;
+    --heading: #1B2A4A;
+    --subheading: #2D3748;
+    --body: #334155;
+    --secondary-text: #64748B;
+    --placeholder: #94A3B8;
+    --border: #E2E8F0;
+    --bg: #F0F4F8;
+    --card: #FFFFFF;
+    --sidebar: #1B2A4A;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  @page {
-    size: A4;
-    margin: 20mm 18mm 25mm 18mm;
-  }
+  @page { size: A4; margin: 20mm 18mm 25mm 18mm; }
 
   body {
-    font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     font-size: 11pt;
     line-height: 1.65;
-    color: #1e293b;
+    color: var(--body);
     background: #fff;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 48px;
   }
 
-  /* === COVER PAGE === */
+  /* === COVER === */
   .cover {
     page-break-after: always;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 90vh;
-    text-align: center;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    min-height: 90vh; text-align: center;
     padding: 60px 40px;
   }
   .cover-logo {
     width: 90px; height: 90px;
-    background: linear-gradient(135deg, #3DDC84, #5E8BFF);
+    background: linear-gradient(135deg, var(--primary), #0E87C7);
     border-radius: 22px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 48px;
-    margin-bottom: 32px;
-    box-shadow: 0 8px 32px rgba(61, 220, 132, 0.2);
+    font-size: 48px; margin-bottom: 32px;
+    box-shadow: 0 8px 32px rgba(11, 111, 164, 0.2);
   }
-  .cover h1 {
-    font-size: 32pt;
-    font-weight: 700;
-    color: #0f172a;
-    line-height: 1.2;
-    margin-bottom: 8px;
-  }
-  .cover .subtitle {
-    font-size: 14pt;
-    color: #64748b;
-    margin-bottom: 40px;
-  }
-  .cover .doc-type {
-    font-size: 18pt;
-    font-weight: 600;
-    color: #5E8BFF;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 60px;
-  }
-  .cover-meta {
-    font-size: 10pt;
-    color: #94a3b8;
-    line-height: 2;
-  }
+  .cover h1 { font-size: 32pt; font-weight: 700; color: var(--heading); line-height: 1.2; margin-bottom: 8px; }
+  .cover .subtitle { font-size: 14pt; color: var(--secondary-text); margin-bottom: 40px; }
+  .cover .doc-type { font-size: 18pt; font-weight: 600; color: var(--primary); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 60px; }
+  .cover-meta { font-size: 10pt; color: var(--placeholder); line-height: 2; }
 
-  /* === TABLE OF CONTENTS === */
-  .toc {
-    page-break-after: always;
-    padding: 20px 0;
-  }
-  .toc h2 {
-    font-size: 20pt;
-    color: #0f172a;
-    margin-bottom: 24px;
-    border-bottom: 3px solid #5E8BFF;
-    padding-bottom: 8px;
-  }
-  .toc-section {
-    margin-bottom: 16px;
-  }
-  .toc-section .toc-title {
-    font-weight: 600;
-    font-size: 12pt;
-    color: #0f172a;
-    margin-bottom: 4px;
-  }
-  .toc-section .toc-items {
-    padding-left: 24px;
-    list-style: none;
-  }
-  .toc-section .toc-items li {
-    padding: 3px 0;
-    font-size: 10.5pt;
-    color: #475569;
-    border-bottom: 1px dotted #e2e8f0;
-  }
-  .toc-section .toc-items li span {
-    float: right;
-    color: #94a3b8;
-    font-size: 9pt;
-  }
+  /* === TOC === */
+  .toc { page-break-after: always; padding: 20px 0; }
+  .toc h2 { font-size: 20pt; color: var(--heading); margin-bottom: 24px; border-bottom: 3px solid var(--primary); padding-bottom: 8px; }
+  .toc-section { margin-bottom: 16px; }
+  .toc-section .toc-title { font-weight: 600; font-size: 12pt; color: var(--heading); margin-bottom: 4px; }
+  .toc-section .toc-items { padding-left: 24px; list-style: none; }
+  .toc-section .toc-items li { padding: 3px 0; font-size: 10.5pt; color: var(--body); border-bottom: 1px dotted var(--border); }
 
   /* === HEADINGS === */
-  h2 {
-    font-size: 18pt;
-    color: #0f172a;
-    margin: 32px 0 16px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #e2e8f0;
-    page-break-after: avoid;
-  }
-  h3 {
-    font-size: 13pt;
-    color: #1e293b;
-    margin: 24px 0 10px;
-    page-break-after: avoid;
-  }
-  h4 {
-    font-size: 11pt;
-    font-weight: 600;
-    color: #334155;
-    margin: 16px 0 8px;
-  }
-
-  /* === CONTENT === */
+  h2 { font-size: 18pt; color: var(--heading); margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--border); page-break-after: avoid; }
+  h3 { font-size: 13pt; color: var(--subheading); margin: 28px 0 10px; page-break-after: avoid; }
+  h4 { font-size: 11pt; font-weight: 600; color: var(--subheading); margin: 18px 0 8px; }
   p { margin-bottom: 10px; }
 
-  .section {
-    page-break-inside: avoid;
-    margin-bottom: 20px;
-  }
+  .section { page-break-inside: avoid; margin-bottom: 20px; }
 
+  /* === CALLOUTS === */
   .callout {
-    background: #f0f9ff;
-    border-left: 4px solid #5E8BFF;
-    padding: 12px 16px;
-    border-radius: 0 8px 8px 0;
-    margin: 14px 0;
-    font-size: 10.5pt;
-    page-break-inside: avoid;
+    background: var(--primary-light); border-left: 4px solid var(--primary);
+    padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0;
+    font-size: 10.5pt; page-break-inside: avoid;
   }
-  .callout.green {
-    background: #f0fdf4;
-    border-left-color: #3DDC84;
+  .callout.teal { background: var(--secondary-light); border-left-color: var(--secondary); }
+  .callout.blue { background: var(--primary-light); border-left-color: var(--primary); }
+  .callout.amber { background: var(--warning-light); border-left-color: var(--warning); }
+  .callout.red { background: var(--critical-light); border-left-color: var(--critical); }
+  .callout.green { background: var(--success-light); border-left-color: var(--success); }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 10.5pt; }
+
+  /* === KEY FEATURE BOXES === */
+  .feature-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 18px 0;
   }
-  .callout.purple {
-    background: #faf5ff;
-    border-left-color: #A78BFA;
+  .feature-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; page-break-inside: avoid;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
-  .callout.amber {
-    background: #fffbeb;
-    border-left-color: #FFB84D;
+  .feature-card .feature-icon {
+    font-size: 24px; margin-bottom: 10px;
   }
-  .callout.red {
-    background: #fef2f2;
-    border-left-color: #FF5A5A;
-  }
-  .callout strong {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 10.5pt;
-  }
+  .feature-card h4 { margin-top: 0; margin-bottom: 6px; color: var(--heading); font-size: 11pt; }
+  .feature-card p { margin-bottom: 0; font-size: 10pt; color: var(--secondary-text); }
+  .feature-card.highlight { border-left: 4px solid var(--primary); }
+  .feature-card.highlight-teal { border-left: 4px solid var(--secondary); }
 
   /* === TABLES === */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 14px 0;
-    font-size: 10pt;
-    page-break-inside: avoid;
-  }
-  th {
-    background: #f1f5f9;
-    text-align: left;
-    padding: 10px 12px;
-    font-weight: 600;
-    color: #334155;
-    border-bottom: 2px solid #cbd5e1;
-    font-size: 9.5pt;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  td {
-    padding: 9px 12px;
-    border-bottom: 1px solid #e2e8f0;
-    color: #475569;
-    vertical-align: top;
-  }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10pt; page-break-inside: avoid; }
+  th { background: var(--bg); text-align: left; padding: 10px 12px; font-weight: 600; color: var(--secondary-text); border-bottom: 2px solid var(--border); font-size: 9.5pt; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--body); vertical-align: top; }
   tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #F7FAFC; }
 
   /* === LISTS === */
-  ul, ol {
-    padding-left: 22px;
-    margin-bottom: 12px;
-  }
-  li {
-    margin-bottom: 5px;
-  }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 5px; }
 
   /* === BADGES === */
-  .badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 9pt;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-  .badge.green { background: #dcfce7; color: #166534; }
-  .badge.purple { background: #f3e8ff; color: #6b21a8; }
-  .badge.blue { background: #dbeafe; color: #1e40af; }
-  .badge.amber { background: #fef3c7; color: #92400e; }
-  .badge.red { background: #fee2e2; color: #991b1b; }
-  .badge.gray { background: #f1f5f9; color: #475569; }
+  .badge { display: inline-block; padding: 3px 12px; border-radius: 9999px; font-size: 9pt; font-weight: 600; letter-spacing: 0.3px; }
+  .badge.teal { background: var(--secondary-light); color: var(--secondary); }
+  .badge.blue { background: var(--primary-light); color: var(--primary); }
+  .badge.green { background: var(--success-light); color: var(--success); }
+  .badge.amber { background: var(--warning-light); color: #92400e; }
+  .badge.red { background: var(--critical-light); color: var(--critical); }
+  .badge.purple { background: #F3E8FF; color: #7C3AED; }
+  .badge.gray { background: var(--bg); color: var(--secondary-text); }
 
   /* === STEPS === */
-  .step {
-    display: flex;
-    gap: 14px;
-    margin: 14px 0;
+  .step { display: flex; gap: 14px; margin: 14px 0; page-break-inside: avoid; }
+  .step-num { flex-shrink: 0; width: 30px; height: 30px; background: linear-gradient(135deg, var(--primary), #0E87C7); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13pt; }
+  .step-num.teal { background: linear-gradient(135deg, var(--secondary), #00ACC1); }
+  .step-content { flex: 1; padding-top: 4px; }
+  .step-content strong { display: block; margin-bottom: 3px; color: var(--heading); }
+
+  /* === QUICK-START BOX === */
+  .quickstart {
+    background: linear-gradient(135deg, #1B2A4A, #162240);
+    color: #fff; border-radius: 12px; padding: 24px 28px; margin: 20px 0;
     page-break-inside: avoid;
   }
-  .step-num {
-    flex-shrink: 0;
-    width: 30px; height: 30px;
-    background: #5E8BFF;
-    color: #fff;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700;
-    font-size: 13pt;
-  }
-  .step-content {
-    flex: 1;
-    padding-top: 4px;
-  }
-  .step-content strong {
-    display: block;
-    margin-bottom: 3px;
-    color: #0f172a;
-  }
+  .quickstart h3 { color: #fff; margin: 0 0 14px; font-size: 14pt; }
+  .quickstart ol { padding-left: 20px; }
+  .quickstart li { color: #CBD5E1; margin-bottom: 8px; font-size: 10.5pt; }
+  .quickstart li strong { color: #fff; }
 
-  /* === SCREENSHOTS placeholder === */
-  .screenshot-placeholder {
-    background: #f8fafc;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    padding: 30px;
-    text-align: center;
-    color: #94a3b8;
-    font-size: 10pt;
-    margin: 14px 0;
-    page-break-inside: avoid;
-  }
+  /* === FLOW === */
+  .flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 16px 0; page-break-inside: avoid; }
+  .flow-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; font-size: 9.5pt; font-weight: 600; color: var(--subheading); }
+  .flow-box.teal { background: var(--secondary-light); border-color: #80CBC4; color: var(--secondary); }
+  .flow-box.blue { background: var(--primary-light); border-color: #90CAF9; color: var(--primary); }
+  .flow-box.green { background: var(--success-light); border-color: #A5D6A7; color: var(--success); }
+  .flow-arrow { font-size: 16pt; color: var(--placeholder); }
 
-  /* === FLOW DIAGRAM === */
-  .flow {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin: 14px 0;
-    page-break-inside: avoid;
+  /* === PORTAL COMPARISON === */
+  .portal-compare {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 18px 0;
+    border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
   }
-  .flow-box {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 9.5pt;
-    font-weight: 500;
-    color: #334155;
-  }
-  .flow-box.green { background: #dcfce7; border-color: #86efac; color: #166534; }
-  .flow-box.purple { background: #f3e8ff; border-color: #c4b5fd; color: #6b21a8; }
-  .flow-box.blue { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
-  .flow-arrow {
-    font-size: 16pt;
-    color: #94a3b8;
-  }
+  .portal-side { padding: 20px; }
+  .portal-side.clinic { background: var(--secondary-light); border-right: 1px solid var(--border); }
+  .portal-side.insur { background: var(--primary-light); }
+  .portal-side h4 { margin-top: 0; }
 
-  /* === KEYBOARD HINTS === */
-  kbd {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
-    padding: 1px 6px;
-    font-size: 9pt;
-    font-family: 'DM Sans', sans-serif;
-  }
+  /* === KBD === */
+  kbd { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 9pt; font-family: 'Inter', sans-serif; }
 
   /* === FOOTER === */
-  .page-footer {
-    font-size: 8pt;
-    color: #94a3b8;
-    text-align: center;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 10px;
-    margin-top: 40px;
-  }
+  .page-footer { font-size: 8pt; color: var(--placeholder); text-align: center; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 40px; }
 
-  /* === DIVIDERS === */
-  hr {
-    border: none;
-    border-top: 1px solid #e2e8f0;
-    margin: 24px 0;
-  }
-
-  /* Page breaks */
+  hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
   .page-break { page-break-before: always; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0; }
 
-  /* Two column layout */
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin: 14px 0;
+  /* Pro tips */
+  .pro-tip {
+    background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px;
+    padding: 14px 18px; margin: 14px 0; font-size: 10pt;
+    page-break-inside: avoid;
   }
+  .pro-tip::before { content: "💡 Pro Tip: "; font-weight: 700; color: #92400E; }
 
-  /* Print optimization */
+  /* Checklist */
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li { padding: 6px 0 6px 28px; position: relative; border-bottom: 1px solid var(--border); }
+  .checklist li::before { content: "☐"; position: absolute; left: 4px; color: var(--primary); font-size: 14px; }
+  .checklist li:last-child { border-bottom: none; }
+
   @media print {
     body { font-size: 10pt; }
     .cover { min-height: 100vh; }
-    a { color: #1e40af; text-decoration: none; }
+    a { color: var(--primary); text-decoration: none; }
+    .quickstart { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 </head>
@@ -354,9 +214,9 @@
   <div class="subtitle">Evidence-Based Dosage Determination for ABA Therapy</div>
   <div class="doc-type">Business User Guide</div>
   <div class="cover-meta">
-    Version 1.0 · February 2026<br/>
-    Dual-Tenant Decision Support System<br/>
-    <em>Provider Clinic &amp; Insurance Payer Portals</em>
+    Version 2.0 · February 2026<br/>
+    Dual-Portal Decision Support System<br/>
+    <em>Provider Clinic &amp; Insurance Payer</em>
   </div>
 </div>
 
@@ -367,928 +227,753 @@
   <h2>Table of Contents</h2>
 
   <div class="toc-section">
-    <div class="toc-title">1. Introduction &amp; Overview</div>
+    <div class="toc-title">1. Welcome &amp; Quick Start</div>
     <ul class="toc-items">
-      <li>What Is the ABA Medical Necessity Calculator? <span>4</span></li>
-      <li>Who Is This Guide For? <span>4</span></li>
-      <li>System Architecture Overview <span>4</span></li>
-      <li>Key Terminology <span>5</span></li>
+      <li>What This System Does</li>
+      <li>Who Uses It</li>
+      <li>60-Second Quick Start</li>
     </ul>
   </div>
 
   <div class="toc-section">
-    <div class="toc-title">2. Getting Started</div>
+    <div class="toc-title">2. Key Features at a Glance</div>
     <ul class="toc-items">
-      <li>Accessing the System <span>6</span></li>
-      <li>Role Selection (Login) <span>6</span></li>
-      <li>Navigation Basics <span>7</span></li>
-      <li>Exiting / Switching Roles <span>7</span></li>
+      <li>Feature Highlights</li>
+      <li>Dual-Portal Architecture</li>
     </ul>
   </div>
 
   <div class="toc-section">
-    <div class="toc-title">3. Clinic Portal — Complete Guide</div>
+    <div class="toc-title">3. Getting Started</div>
     <ul class="toc-items">
-      <li>Portal Overview <span>8</span></li>
-      <li>Tab 1: Calculator — Running an Assessment <span>8</span></li>
-      <li>Understanding the 8 Assessment Sections <span>9</span></li>
-      <li>Reading the Results Panel <span>13</span></li>
-      <li>Understanding the ML Approval Predictor <span>14</span></li>
-      <li>Submitting for Authorization <span>15</span></li>
-      <li>Tab 2: My Claims — Tracking Submissions <span>15</span></li>
-      <li>Tab 3: Insights — Analytics Dashboard <span>16</span></li>
+      <li>Accessing the System</li>
+      <li>Role Selection (Login)</li>
+      <li>Navigation — Sidebar &amp; Content Area</li>
+      <li>Switching Roles</li>
     </ul>
   </div>
 
   <div class="toc-section">
-    <div class="toc-title">4. Insurance Portal — Complete Guide</div>
+    <div class="toc-title">4. Clinic Portal — Complete Guide</div>
     <ul class="toc-items">
-      <li>Portal Overview <span>17</span></li>
-      <li>Tab 1: Review Queue — Processing Claims <span>17</span></li>
-      <li>Making Decisions (Approve / Deny / Request Info) <span>18</span></li>
-      <li>Tab 2: Policy Calculator — Scenario Analysis <span>19</span></li>
-      <li>Tab 3: Decisions — Historical Record <span>20</span></li>
-      <li>Tab 4: Policy Configuration — Managing Payer Profiles <span>20</span></li>
+      <li>Portal Overview &amp; Navigation</li>
+      <li>Calculator: Running an Assessment</li>
+      <li>The 8 Assessment Sections Explained</li>
+      <li>Understanding the Results Panel</li>
+      <li>ML Approval Predictor</li>
+      <li>Submitting for Authorization</li>
+      <li>My Claims: Tracking Submissions</li>
+      <li>Insights: Analytics Dashboard</li>
     </ul>
   </div>
 
   <div class="toc-section">
-    <div class="toc-title">5. The 7-Step Dosage Algorithm — How It Works</div>
+    <div class="toc-title">5. Insurance Portal — Complete Guide</div>
     <ul class="toc-items">
-      <li>Algorithm Overview <span>22</span></li>
-      <li>Step-by-Step Explanation <span>22</span></li>
-      <li>Understanding Tiers <span>24</span></li>
-      <li>Clinical Flags &amp; Risk Indicators <span>24</span></li>
+      <li>Portal Overview &amp; Navigation</li>
+      <li>Review Queue: Processing Claims</li>
+      <li>Making Decisions</li>
+      <li>Policy Calculator: Scenario Analysis</li>
+      <li>Decisions: Historical Record</li>
+      <li>Policy Configuration: Managing Payer Profiles</li>
     </ul>
   </div>
 
   <div class="toc-section">
-    <div class="toc-title">6. End-to-End Workflow</div>
+    <div class="toc-title">6. The 7-Step Dosage Algorithm</div>
     <ul class="toc-items">
-      <li>Complete Claims Pipeline <span>25</span></li>
-      <li>Workflow Diagram <span>25</span></li>
+      <li>How the Calculation Works</li>
+      <li>Understanding Tiers</li>
+      <li>Clinical Flags &amp; Risk Indicators</li>
     </ul>
   </div>
 
   <div class="toc-section">
-    <div class="toc-title">7. Reference Tables &amp; Appendices</div>
+    <div class="toc-title">7. End-to-End Workflow</div>
     <ul class="toc-items">
-      <li>Status Definitions <span>26</span></li>
-      <li>FII Domain Scoring Reference <span>26</span></li>
-      <li>Payer Profile Parameters <span>27</span></li>
-      <li>FAQ <span>28</span></li>
+      <li>Complete Claims Pipeline</li>
+    </ul>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-title">8. Reference &amp; FAQ</div>
+    <ul class="toc-items">
+      <li>Status Definitions</li>
+      <li>FII Domain Scoring Guide</li>
+      <li>Payer Profile Comparison</li>
+      <li>Frequently Asked Questions</li>
+      <li>Glossary of Terms</li>
     </ul>
   </div>
 </div>
 
 <!-- ============================================================ -->
-<!-- SECTION 1: INTRODUCTION -->
+<!-- SECTION 1: WELCOME -->
 <!-- ============================================================ -->
 <div class="page-break"></div>
-<h2>1. Introduction &amp; Overview</h2>
+<h2>1. Welcome &amp; Quick Start</h2>
 
-<h3>What Is the ABA Medical Necessity Calculator?</h3>
+<h3>What This System Does</h3>
 <p>
-  The <strong>ABA Medical Necessity Calculator</strong> is a web-based decision support system designed to bring 
-  transparency, consistency, and clinical rigor to the process of determining recommended therapy hours for 
-  Applied Behavior Analysis (ABA) treatment. It serves two distinct user communities through dedicated portals:
+  The <strong>ABA Medical Necessity Calculator</strong> is a web-based decision support tool that brings
+  transparency and consistency to ABA therapy authorization. It answers the question every stakeholder asks:
 </p>
 
-<div class="two-col">
-  <div class="callout green">
-    <strong>🏥 Provider Clinic Portal</strong>
-    For BCBA clinicians and clinic administrators who assess patients, calculate recommended dosage, and submit 
-    authorization requests to insurance payers.
+<div class="callout blue" style="font-size: 12pt; text-align: center;">
+  <strong style="font-size: 14pt; color: var(--primary);">"How many hours of ABA therapy does this patient need per week?"</strong>
+  The system uses a clinically-grounded, 7-step algorithm to produce a transparent, reproducible recommendation — and both clinics and insurers see the same math.
+</div>
+
+<h3>Who Uses It</h3>
+<div class="portal-compare">
+  <div class="portal-side clinic">
+    <h4 style="color: var(--secondary);">🏥 Provider Clinic Users</h4>
+    <ul style="font-size: 10pt; color: var(--body);">
+      <li><strong>BCBAs</strong> — conduct assessments, calculate dosage</li>
+      <li><strong>Clinic Administrators</strong> — track claims, review analytics</li>
+      <li><strong>Clinical Directors</strong> — monitor approval rates, identify trends</li>
+    </ul>
   </div>
-  <div class="callout purple">
-    <strong>🛡️ Insurance Payer Portal</strong>
-    For claims reviewers and utilization management staff who review authorization requests, validate calculations, 
-    and make approval/denial decisions.
-  </div>
-</div>
-
-<p>
-  The system implements an <strong>evidence-based, 7-step dosage determination algorithm</strong> that considers 
-  functional impairment, adaptive behavior assessments, behavioral risks, environmental factors, and age — producing 
-  a transparent, reproducible recommendation for weekly therapy hours.
-</p>
-
-<h3>Who Is This Guide For?</h3>
-<p>This guide is written for <strong>business users</strong> — clinicians, clinic administrators, claims reviewers, 
-  and management staff — who will use the system day-to-day. No technical knowledge is required. The guide covers 
-  every screen, button, and workflow you'll encounter.</p>
-
-<h3>System Architecture Overview</h3>
-<p>The system is organized as a <strong>dual-tenant application</strong> with a shared backend:</p>
-
-<div class="flow">
-  <div class="flow-box green">Clinic Portal</div>
-  <div class="flow-arrow">↘</div>
-  <div class="flow-box blue">Shared API &amp; Database</div>
-  <div class="flow-arrow">↙</div>
-  <div class="flow-box purple">Insurance Portal</div>
-</div>
-
-<p>Both portals share the same patient records, claims data, and calculation engine — ensuring that the 
-  clinic's submitted calculation is <em>exactly</em> what the insurance reviewer sees, promoting trust and 
-  reducing disputes.</p>
-
-<h3>Key Terminology</h3>
-<table>
-  <tr><th>Term</th><th>Definition</th></tr>
-  <tr><td><strong>ABA</strong></td><td>Applied Behavior Analysis — evidence-based therapy for autism spectrum disorders</td></tr>
-  <tr><td><strong>FII</strong></td><td>Functional Impairment Index — a 9-domain severity rating (0–36) that drives the base hours recommendation</td></tr>
-  <tr><td><strong>Vineland-3</strong></td><td>Vineland Adaptive Behavior Scales, 3rd Edition — a standardized assessment measuring adaptive behavior across communication, daily living, socialization, and motor skills</td></tr>
-  <tr><td><strong>VB-MAPP</strong></td><td>Verbal Behavior Milestones Assessment and Placement Program — assesses language and social milestones, barriers, and transition readiness</td></tr>
-  <tr><td><strong>Dosage</strong></td><td>Recommended weekly therapy hours</td></tr>
-  <tr><td><strong>Tier</strong></td><td>Classification of service intensity: Tier 1 (Focused, &lt;20h), Tier 2 (Moderate, 20–29h), Tier 3 (Intensive, 30+h)</td></tr>
-  <tr><td><strong>Claim</strong></td><td>An authorization request submitted from the clinic to insurance for approval</td></tr>
-  <tr><td><strong>Payer Profile</strong></td><td>An insurance company's policy configuration that adjusts how calculations are weighted</td></tr>
-  <tr><td><strong>ML Predictor</strong></td><td>The built-in AI-powered approval probability estimator</td></tr>
-  <tr><td><strong>BCBA</strong></td><td>Board Certified Behavior Analyst — the licensed professional conducting assessments</td></tr>
-</table>
-
-<!-- ============================================================ -->
-<!-- SECTION 2: GETTING STARTED -->
-<!-- ============================================================ -->
-<div class="page-break"></div>
-<h2>2. Getting Started</h2>
-
-<h3>Accessing the System</h3>
-<p>Open your web browser and navigate to the application URL provided by your administrator. The system is 
-  optimized for modern browsers (Chrome, Edge, Firefox, Safari).</p>
-
-<div class="callout">
-  <strong>💡 Tip</strong>
-  For the best experience, use a screen resolution of at least 1280×720. The calculator form is most comfortable 
-  on a widescreen display.
-</div>
-
-<h3>Role Selection (Login Screen)</h3>
-<p>When you first access the system, you'll see the <strong>Role Selection</strong> screen. This is the entry 
-  point for all users.</p>
-
-<div class="screenshot-placeholder">
-  [ Login Screen ]<br/>
-  Two large cards side by side:<br/>
-  🏥 <strong>Provider Clinic</strong> (left, green accent) &nbsp;|&nbsp; 🛡️ <strong>Insurance Payer</strong> (right, purple accent)
-</div>
-
-<div class="step">
-  <div class="step-num">1</div>
-  <div class="step-content">
-    <strong>Choose Your Role</strong>
-    Click the card that matches your role:
-    <ul>
-      <li><strong>Provider Clinic</strong> — for BCBAs, clinicians, and clinic staff conducting assessments and submitting claims</li>
-      <li><strong>Insurance Payer</strong> — for claims reviewers, utilization management, and policy administrators</li>
+  <div class="portal-side insur">
+    <h4 style="color: var(--primary);">🛡️ Insurance Payer Users</h4>
+    <ul style="font-size: 10pt; color: var(--body);">
+      <li><strong>Claims Reviewers</strong> — evaluate requests, make decisions</li>
+      <li><strong>UM Staff</strong> — verify calculations, run scenarios</li>
+      <li><strong>Policy Administrators</strong> — configure payer parameters</li>
     </ul>
   </div>
 </div>
 
-<div class="step">
-  <div class="step-num">2</div>
-  <div class="step-content">
-    <strong>You're In!</strong>
-    After clicking, you'll immediately enter your respective portal. No password is required in the demo version.
-  </div>
-</div>
-
-<h3>Navigation Basics</h3>
-<p>Both portals share the same navigation pattern:</p>
-
-<table>
-  <tr><th>Element</th><th>Location</th><th>Purpose</th></tr>
-  <tr><td><strong>Header Bar</strong></td><td>Top of every screen</td><td>Shows the app name, portal type (Clinic/Insurance), your user name, and the Exit button</td></tr>
-  <tr><td><strong>Tab Bar</strong></td><td>Below the header</td><td>Switch between the main functional areas of your portal</td></tr>
-  <tr><td><strong>Active Tab Indicator</strong></td><td>Tab bar</td><td>The currently active tab has a colored underline (green for Clinic, purple for Insurance)</td></tr>
-  <tr><td><strong>Content Area</strong></td><td>Main body</td><td>The primary workspace for the selected tab</td></tr>
-</table>
-
-<div class="callout green">
-  <strong>🟢 Color Coding</strong>
-  The system uses consistent color coding throughout: <strong>Green</strong> accents indicate Clinic Portal elements, 
-  <strong>Purple</strong> accents indicate Insurance Portal elements. This helps you always know which portal you're in.
-</div>
-
-<h3>Exiting / Switching Roles</h3>
-<p>To exit your current portal and return to the role selection screen:</p>
-<ol>
-  <li>Click the <strong>"Exit"</strong> button in the top-right corner of the header</li>
-  <li>You'll be returned to the Login screen where you can select a different role</li>
-</ol>
-<p>This is useful for demo purposes when you want to show the Clinic workflow and then switch to Insurance 
-  to see the same claim from the reviewer's perspective.</p>
-
-<!-- ============================================================ -->
-<!-- SECTION 3: CLINIC PORTAL -->
-<!-- ============================================================ -->
-<div class="page-break"></div>
-<h2>3. Clinic Portal — Complete Guide</h2>
-
-<h3>Portal Overview</h3>
-<p>The Clinic Portal is where clinical staff perform patient assessments and manage authorization requests. 
-  It contains <strong>three tabs</strong>:</p>
-
-<table>
-  <tr><th>Tab</th><th>Icon</th><th>Purpose</th></tr>
-  <tr>
-    <td><strong>Calculator</strong></td>
-    <td>🧮</td>
-    <td>The primary workspace — enter assessment data, see live dosage calculation, and submit for authorization</td>
-  </tr>
-  <tr>
-    <td><strong>My Claims</strong></td>
-    <td>📄</td>
-    <td>Track all submitted authorization requests and their current status</td>
-  </tr>
-  <tr>
-    <td><strong>Insights</strong></td>
-    <td>📊</td>
-    <td>View aggregate analytics — approval rates, average hours, trends</td>
-  </tr>
-</table>
-
-<hr/>
-
-<h3>Tab 1: Calculator — Running an Assessment</h3>
-<p>The Calculator is the heart of the Clinic Portal. It presents an <strong>8-section assessment form</strong> 
-  on the left (2/3 of the screen) and a <strong>live results panel</strong> on the right (1/3 of the screen) 
-  that updates in real-time as you enter data.</p>
-
-<div class="screenshot-placeholder">
-  [ Calculator Layout ]<br/>
-  LEFT (2/3): 8 collapsible form sections stacked vertically<br/>
-  RIGHT (1/3): Sticky results panel — dosage, tier, breakdown, ML prediction, Submit button
-</div>
-
-<div class="callout">
-  <strong>💡 Key Behavior: Live Calculation</strong>
-  The results panel on the right updates <em>instantly</em> as you fill in the form. You don't need to click 
-  a "Calculate" button — the system recalculates with every change. This lets you explore "what-if" scenarios 
-  in real time.
-</div>
-
-<h3>Understanding the 8 Assessment Sections</h3>
-<p>Each section is a collapsible card. Click the section header to expand or collapse it. A small numbered 
-  circle shows the step number, and adjustment badges appear on sections that contribute to the calculation.</p>
-
-<h4>Section 1: Patient Demographics</h4>
-<table>
-  <tr><th>Field</th><th>What to Enter</th><th>Notes</th></tr>
-  <tr><td>Patient Name</td><td>Full name of the patient</td><td>Used for claim identification</td></tr>
-  <tr><td>Patient ID</td><td>Medical Record Number or clinic ID</td><td>Used for cross-referencing</td></tr>
-  <tr><td><strong>Age</strong></td><td>Patient's current age (2–21)</td><td><strong>Required</strong> — the calculation won't start until age is entered. Affects the age multiplier in Step 6.</td></tr>
-  <tr><td>Diagnosis</td><td>Select from: ASD, PDD-NOS, Asperger's, Other</td><td>Diagnostic classification</td></tr>
-  <tr><td>Educational Setting</td><td>Mainstream, Supported, Special Ed, Home-Based, Not Enrolled</td><td>Contextual information</td></tr>
-  <tr><td>Living Situation</td><td>Two-Parent, Single-Parent, Foster Care, Group Home, Other</td><td>Contextual information</td></tr>
-</table>
-
-<div class="callout amber">
-  <strong>⚠️ Important</strong>
-  The <strong>Age</strong> field is the trigger for the live calculation. Until a valid age is entered, the results 
-  panel will show "Enter patient age to see live calculation."
-</div>
-
-<h4>Section 2: Functional Impairment Index (FII)</h4>
-<p>This is the <strong>most important section</strong> — it determines the base hours. You'll rate 
-  <strong>9 functional domains</strong> on a scale of 0 to 4:</p>
-
-<table>
-  <tr><th>Rating</th><th>Meaning</th><th>Description</th></tr>
-  <tr><td><strong>0</strong></td><td>None</td><td>No impairment — age-appropriate functioning</td></tr>
-  <tr><td><strong>1</strong></td><td>Mild</td><td>Minor difficulties, mostly independent</td></tr>
-  <tr><td><strong>2</strong></td><td>Moderate</td><td>Noticeable deficits, requires regular support</td></tr>
-  <tr><td><strong>3</strong></td><td>Severe</td><td>Significant impairment, substantial support needed</td></tr>
-  <tr><td><strong>4</strong></td><td>Profound</td><td>Near-total impairment, constant support required</td></tr>
-</table>
-
-<p>The <strong>9 domains</strong> are:</p>
-<ol>
-  <li>Communication</li>
-  <li>Social Reciprocity</li>
-  <li>Adaptive Skills</li>
-  <li>Emotional Regulation</li>
-  <li>Safety / Aggression</li>
-  <li>Self-Injury</li>
-  <li>School / Community</li>
-  <li>Family Impact</li>
-  <li>Restricted / Repetitive Behaviors</li>
-</ol>
-
-<p>The section header shows a <strong>badge</strong> with the total FII score (e.g., "17/36"), color-coded:</p>
-<ul>
-  <li><span class="badge green">Low (≤11)</span> — Green</li>
-  <li><span class="badge amber">Moderate (12–19)</span> — Amber</li>
-  <li><span class="badge red">High (≥20)</span> — Red</li>
-</ul>
-
-<h4>Section 3: Vineland-3 Adaptive Behavior</h4>
-<p>Enter <strong>standard scores</strong> from the Vineland-3 assessment (typical range 20–160, mean = 100):</p>
-<table>
-  <tr><th>Field</th><th>What It Measures</th></tr>
-  <tr><td>Communication</td><td>Receptive, expressive, and written language</td></tr>
-  <tr><td>Daily Living Skills</td><td>Personal, domestic, and community self-care</td></tr>
-  <tr><td>Socialization</td><td>Interpersonal relationships, play, and coping</td></tr>
-  <tr><td>Motor Skills</td><td>Fine and gross motor abilities</td></tr>
-  <tr><td>Adaptive Behavior Composite</td><td>Overall composite score</td></tr>
-</table>
-<p>Scores below 85 add hours; scores below 70 add additional hours. Maximum Vineland adjustment: <strong>+12 hours</strong>.</p>
-
-<h4>Section 4: VB-MAPP Assessment</h4>
-<p>Enter scores from the VB-MAPP evaluation:</p>
-<table>
-  <tr><th>Field</th><th>Range</th><th>Interpretation</th></tr>
-  <tr><td>Milestones Score</td><td>0–170</td><td><strong>Lower = more delayed.</strong> Scores ≤45 add +6h; 46–100 add +3h</td></tr>
-  <tr><td>Barriers Score</td><td>0–24</td><td><strong>Higher = more barriers.</strong> Scores ≥19 add +6h; 13–18 add +4h; 7–12 add +2h</td></tr>
-  <tr><td>Transition Score</td><td>0–18</td><td><strong>Lower = less ready.</strong> Scores ≤6 add +2h; 7–12 add +1h</td></tr>
-</table>
-<p>Maximum VB-MAPP adjustment: <strong>+12 hours</strong>.</p>
-
-<h4>Section 5: Skill Deficit Domains</h4>
-<p>Select all applicable skill deficit areas by clicking the <strong>chips/buttons</strong>. Selected items 
-  appear highlighted in green. Available domains:</p>
-<div style="margin: 8px 0;">
-  <span class="badge green">Communication</span>
-  <span class="badge green">Social Skills</span>
-  <span class="badge green">Play Skills</span>
-  <span class="badge green">Self-Care</span>
-  <span class="badge green">Academic</span>
-  <span class="badge green">Motor Skills</span>
-  <span class="badge green">Executive Functioning</span>
-  <span class="badge green">Community/Safety</span>
-</div>
-<p>These contribute to the recommended number of treatment goals (2–12).</p>
-
-<h4>Section 6: Behavioral Assessment</h4>
-<table>
-  <tr><th>Field</th><th>Options</th><th>Hour Impact</th></tr>
-  <tr><td>Aggression Frequency</td><td>None, Monthly, 6+/month, Daily</td><td>Daily = +5h; 6+/month = +3h</td></tr>
-  <tr><td>Self-Injury Severity</td><td>None, Mild, Moderate, Severe</td><td>Severe = +8h; Moderate = +5h; Mild = +3h</td></tr>
-  <tr><td>Crisis Events (Past 6 months)</td><td>None, 1 event, 2+ events</td><td>2+ events = +8h; 1 event = +5h</td></tr>
-  <tr><td>Elopement / Wandering</td><td>Checkbox (yes/no)</td><td>Yes = +5h</td></tr>
-</table>
-<p>Maximum behavioral adjustment: <strong>+16 hours</strong>.</p>
-
-<div class="callout red">
-  <strong>🔴 Clinical Alert</strong>
-  If self-injury is rated as "Severe," the system activates a <strong>high-risk override</strong> that prevents 
-  the age-based reduction for teenagers, ensuring high-risk patients receive full recommended hours regardless of age.
-</div>
-
-<h4>Section 7: Environmental Modifiers</h4>
-<p>Check all applicable environmental factors. Each checked item adds <strong>+2 hours</strong> (max +8h total):</p>
-<ul>
-  <li>☐ School placement at risk</li>
-  <li>☐ CPS involvement</li>
-  <li>☐ Regression</li>
-  <li>☐ Caregiver burnout</li>
-  <li>☐ Loss of ABA services</li>
-  <li>☐ Limited caregiver capacity</li>
-  <li>☐ No school supports</li>
-</ul>
-
-<h4>Section 8: Risk Assessment</h4>
-<p>Rate each risk factor on a scale of 0 (None) to 4 (Extreme):</p>
-<ul>
-  <li>Risk of harm to self</li>
-  <li>Risk of harm to others</li>
-  <li>Elopement / wandering</li>
-  <li>Lack of safety awareness</li>
-  <li>Restrictive placement risk</li>
-  <li>Medical complexity</li>
-</ul>
-<p>If the total risk score reaches <strong>≥15 out of 24</strong>, the system activates the high-risk override 
-  and displays a <span class="badge red">HIGH RISK</span> badge.</p>
-
-<hr/>
-
-<div class="page-break"></div>
-<h3>Reading the Results Panel</h3>
-<p>The right side of the Calculator screen contains a <strong>sticky results panel</strong> that follows you 
-  as you scroll through the form. It has several components:</p>
-
-<h4>Dosage Recommendation Card</h4>
-<table>
-  <tr><th>Element</th><th>What It Shows</th></tr>
-  <tr><td><strong>Large Number</strong> (e.g., "30")</td><td>Final recommended hours per week</td></tr>
-  <tr><td><strong>Tier Badge</strong></td><td>Tier 1 (Focused), Tier 2 (Moderate), or Tier 3 (Intensive)</td></tr>
-  <tr><td><strong>Rationale Steps</strong></td><td>Line-by-line breakdown of how the number was calculated: base hours from FII, each adjustment, age multiplier, and final result</td></tr>
-</table>
-
-<h4>Breakdown Cards (2×2 Grid)</h4>
-<table>
-  <tr><th>Card</th><th>Meaning</th></tr>
-  <tr><td><strong>Supervision</strong></td><td>Recommended BCBA supervision hours per week (based on tier percentage)</td></tr>
-  <tr><td><strong>Parent Training</strong></td><td>Recommended parent/caregiver training hours per week</td></tr>
-  <tr><td><strong>Goals</strong></td><td>Recommended number of treatment goals (derived from skill deficits + FII severity)</td></tr>
-  <tr><td><strong>Risk Score</strong></td><td>Total risk score out of 24, color-coded by severity</td></tr>
-</table>
-
-<h4>Clinical Flags (if applicable)</h4>
-<p>A red-background box appears when the system detects conditions that require special attention:</p>
-<ul>
-  <li><strong>HIGH RISK — Safety Plan Required</strong> — Risk score ≥15</li>
-  <li><strong>Severe Functional Impairment</strong> — FII score ≥25</li>
-  <li><strong>Significant Behavioral Risk</strong> — Behavioral adjustment ≥10</li>
-  <li><strong>Multiple Environmental Stressors</strong> — Environmental adjustment ≥6</li>
-</ul>
-
-<h3>Understanding the ML Approval Predictor</h3>
-<p>Below the dosage recommendation, you'll find the <strong>Approval Predictor</strong> panel, marked with 
-  an <span class="badge purple">AI</span> badge. This uses a deterministic scoring model to estimate the 
-  probability that the insurance payer will approve the request.</p>
-
-<table>
-  <tr><th>Element</th><th>What It Means</th></tr>
-  <tr><td><strong>Percentage</strong> (e.g., 72%)</td><td>Estimated probability of approval</td></tr>
-  <tr><td><strong>Progress Bar</strong></td><td>Visual representation — green (likely approve), amber (borderline), red (likely deny)</td></tr>
-  <tr><td><strong>Factor List</strong></td><td>Specific factors influencing the prediction, marked with ✓ (positive), ✗ (negative), or – (neutral)</td></tr>
-</table>
-
-<div class="callout purple">
-  <strong>🤖 How the Predictor Works</strong>
-  The ML Predictor analyzes your assessment data across 7 dimensions:
+<h3>60-Second Quick Start</h3>
+<div class="quickstart">
+  <h3>⚡ Get Going in 4 Steps</h3>
   <ol>
-    <li><strong>FII Severity</strong> — Higher severity scores strongly support necessity</li>
-    <li><strong>Vineland Data</strong> — Having standardized scores, especially low ones, strengthens claims</li>
-    <li><strong>VB-MAPP Data</strong> — Inclusion of VB-MAPP assessments improves approval odds</li>
-    <li><strong>Behavioral Severity</strong> — Significant behavioral concerns justify intensive services</li>
-    <li><strong>Requested Hours</strong> — Conservative requests face less scrutiny</li>
-    <li><strong>Skill Deficits Documented</strong> — More documented domains = stronger case</li>
-    <li><strong>Safety Risk Flags</strong> — High-risk flags strengthen medical necessity arguments</li>
+    <li><strong>Open the app</strong> in your browser — you'll see two role cards</li>
+    <li><strong>Pick your role</strong> — click "Provider Clinic" or "Insurance Payer"</li>
+    <li><strong>Use the sidebar</strong> to navigate between tabs (Calculator, Claims, Insights, etc.)</li>
+    <li><strong>Start working:</strong> Clinics → enter patient data in Calculator; Insurance → review claims in Queue</li>
   </ol>
 </div>
 
+<!-- ============================================================ -->
+<!-- SECTION 2: KEY FEATURES -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h2>2. Key Features at a Glance</h2>
+
+<div class="feature-grid">
+  <div class="feature-card highlight">
+    <div class="feature-icon">⚡</div>
+    <h4>Live Calculation Engine</h4>
+    <p>Results update instantly as you type — no "Calculate" button needed. Explore what-if scenarios in real time.</p>
+  </div>
+  <div class="feature-card highlight">
+    <div class="feature-icon">🤖</div>
+    <h4>AI Approval Predictor</h4>
+    <p>Built-in ML model estimates the probability that insurance will approve each request, with factor-by-factor explanations.</p>
+  </div>
+  <div class="feature-card highlight-teal">
+    <div class="feature-icon">📊</div>
+    <h4>Transparent Rationale</h4>
+    <p>Every calculation shows a step-by-step breakdown — both clinic and insurance see exactly the same math, reducing disputes.</p>
+  </div>
+  <div class="feature-card highlight-teal">
+    <div class="feature-icon">⚙️</div>
+    <h4>Configurable Payer Policies</h4>
+    <p>Insurance can adjust weights, limits, and multipliers through Policy Configuration — no code changes needed.</p>
+  </div>
+  <div class="feature-card highlight">
+    <div class="feature-icon">🔄</div>
+    <h4>End-to-End Claims Pipeline</h4>
+    <p>Complete workflow from assessment → submission → review → decision, all tracked with status updates.</p>
+  </div>
+  <div class="feature-card highlight-teal">
+    <div class="feature-icon">📈</div>
+    <h4>Analytics &amp; Insights</h4>
+    <p>Aggregate metrics on approval rates, average hours, age distributions, and tier breakdowns at a glance.</p>
+  </div>
+  <div class="feature-card highlight">
+    <div class="feature-icon">🚨</div>
+    <h4>Clinical Flags &amp; Alerts</h4>
+    <p>Automatic detection of high-risk patients, severe impairment, and safety concerns — highlighted prominently for both portals.</p>
+  </div>
+  <div class="feature-card highlight-teal">
+    <div class="feature-icon">🎯</div>
+    <h4>Dual-Portal Architecture</h4>
+    <p>Separate experiences optimized for each user type, sharing the same data and calculation engine underneath.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: GETTING STARTED -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h2>3. Getting Started</h2>
+
+<h3>Accessing the System</h3>
+<p>Open your web browser (Chrome, Edge, Firefox, or Safari) and navigate to the URL provided by your administrator. The system is designed for desktop screens — a resolution of 1280×720 or higher is recommended.</p>
+
+<h3>Role Selection (Login Screen)</h3>
+<p>The first screen presents two large cards:</p>
+
+<div class="two-col">
+  <div class="callout teal">
+    <strong>🏥 Provider Clinic</strong>
+    Click this to enter as a BCBA, clinician, or clinic staff member. You'll see the Calculator, My Claims, and Insights tabs.
+  </div>
+  <div class="callout blue">
+    <strong>🛡️ Insurance Payer</strong>
+    Click this to enter as a claims reviewer or policy administrator. You'll see the Review Queue, Policy Calc, Decisions, and Policy Config tabs.
+  </div>
+</div>
+
+<p>No password is required in the demo — just click your role and you're in.</p>
+
+<h3>Navigation — Sidebar &amp; Content Area</h3>
+<p>Once inside either portal, the layout has two parts:</p>
+
+<table>
+  <tr><th>Area</th><th>Location</th><th>What It Does</th></tr>
+  <tr>
+    <td><strong>Sidebar</strong></td>
+    <td>Left side (dark navy, 260px wide)</td>
+    <td>
+      Shows the app logo, your portal name (Clinic Portal / Insurance Portal), navigation tabs, and your user info.
+      Click any tab to switch views. The <strong>active tab</strong> is highlighted with white text and a teal/blue left border.
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Top Bar</strong></td>
+    <td>Top of the content area</td>
+    <td>Displays the page title. Uses a frosted glass effect that stays visible as you scroll.</td>
+  </tr>
+  <tr>
+    <td><strong>Content Area</strong></td>
+    <td>Main body (right of sidebar)</td>
+    <td>The workspace for the currently selected tab. Scrolls independently.</td>
+  </tr>
+</table>
+
+<div class="callout teal">
+  <strong>🎨 Color Coding</strong>
+  Throughout the system, <span class="badge teal">teal accents</span> indicate Clinic Portal elements and
+  <span class="badge blue">blue accents</span> indicate Insurance Portal elements. This helps you always know which portal you're using.
+</div>
+
+<h3>Switching Roles</h3>
+<p>To switch between Clinic and Insurance portals:</p>
+<ol>
+  <li>Click the <strong>logout icon</strong> (arrow) in the bottom-left corner of the sidebar</li>
+  <li>You'll return to the Role Selection screen</li>
+  <li>Choose the other role</li>
+</ol>
+
+<div class="pro-tip">
+  This is especially useful for demos: submit a claim as the Clinic, then switch to Insurance to review the same claim from the payer's perspective.
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: CLINIC PORTAL -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<h2>4. Clinic Portal — Complete Guide</h2>
+
+<h3>Portal Overview</h3>
+<p>The Clinic Portal has <strong>three tabs</strong> in the sidebar:</p>
+
+<table>
+  <tr><th>Tab</th><th>Purpose</th><th>When to Use</th></tr>
+  <tr>
+    <td><strong>🧮 Calculator</strong></td>
+    <td>Enter assessments, see live dosage calculation, submit for authorization</td>
+    <td>Every time you conduct a patient evaluation</td>
+  </tr>
+  <tr>
+    <td><strong>📄 My Claims</strong></td>
+    <td>Track submitted requests and their statuses</td>
+    <td>To check if a claim was approved, denied, or needs more info</td>
+  </tr>
+  <tr>
+    <td><strong>📊 Insights</strong></td>
+    <td>View aggregate analytics across all submissions</td>
+    <td>For reporting, trend analysis, and performance review</td>
+  </tr>
+</table>
+
+<hr/>
+
+<h3>Calculator — Running an Assessment</h3>
+<p>The Calculator is the heart of the system. It uses a <strong>two-panel layout</strong>:</p>
+
+<div class="two-col">
+  <div>
+    <h4>Left Panel (2/3 width) — Assessment Form</h4>
+    <p>Eight collapsible sections, each with a numbered step indicator. Click any section header to expand or collapse it.</p>
+  </div>
+  <div>
+    <h4>Right Panel (1/3 width) — Live Results</h4>
+    <p>A sticky panel that follows you as you scroll. Shows the recommended hours, tier, breakdown cards, clinical flags, ML prediction, and the Submit button.</p>
+  </div>
+</div>
+
+<div class="callout blue">
+  <strong>⚡ Key Concept: Live Calculation</strong>
+  There is no "Calculate" button. The results panel updates <em>instantly</em> with every keystroke. This makes it easy to explore "what-if" scenarios — change a rating and immediately see how it affects the recommendation.
+</div>
+
 <div class="callout amber">
-  <strong>⚠️ Important Disclaimer</strong>
-  The ML Predictor is a <em>decision support tool</em>, not a guarantee. Actual approval decisions depend on the 
-  specific insurance payer's policies, clinical reviewer judgment, and additional documentation. Use the predictor 
-  to identify weak areas in your submission and strengthen them before submitting.
+  <strong>⚠️ Getting Started</strong>
+  The calculation won't activate until you enter a valid <strong>Age</strong> (2–21) in Section 1. Until then, the results panel shows "Enter patient age to see live calculation."
+</div>
+
+<h3>The 8 Assessment Sections</h3>
+
+<h4>Section 1: Patient Demographics</h4>
+<p>Basic patient information. The critical field is <strong>Age</strong> — it triggers the calculation and determines the age multiplier.</p>
+<table>
+  <tr><th>Field</th><th>What to Enter</th><th>Impact on Calculation</th></tr>
+  <tr><td>Patient Name</td><td>Full name</td><td>Identification only</td></tr>
+  <tr><td>Patient ID</td><td>MRN or clinic ID</td><td>Cross-referencing only</td></tr>
+  <tr><td><strong>Age ★</strong></td><td>Current age (2–21)</td><td><strong>Triggers calculation.</strong> Determines age multiplier in Step 6.</td></tr>
+  <tr><td>Diagnosis</td><td>ASD, PDD-NOS, Asperger's, Other</td><td>Contextual</td></tr>
+  <tr><td>Educational Setting</td><td>Mainstream, Special Ed, Home-Based, etc.</td><td>Contextual</td></tr>
+  <tr><td>Living Situation</td><td>Two-Parent, Foster Care, etc.</td><td>Contextual</td></tr>
+</table>
+
+<h4>Section 2: Functional Impairment Index (FII) ★ Most Important</h4>
+<p>This section <strong>drives the base hours</strong>. Rate 9 functional domains from 0 (None) to 4 (Profound) by clicking the numbered buttons:</p>
+
+<table>
+  <tr><th>Rating</th><th>Label</th><th>What It Means</th></tr>
+  <tr><td><strong>0</strong></td><td>None</td><td>Age-appropriate functioning</td></tr>
+  <tr><td><strong>1</strong></td><td>Mild</td><td>Minor difficulties, mostly independent</td></tr>
+  <tr><td><strong>2</strong></td><td>Moderate</td><td>Regular support needed</td></tr>
+  <tr><td><strong>3</strong></td><td>Severe</td><td>Significant impairment, substantial support</td></tr>
+  <tr><td><strong>4</strong></td><td>Profound</td><td>Near-total impairment, constant support</td></tr>
+</table>
+
+<p>The 9 domains are: <strong>Communication</strong>, <strong>Social Reciprocity</strong>, <strong>Adaptive Skills</strong>, <strong>Emotional Regulation</strong>, <strong>Safety/Aggression</strong>, <strong>Self-Injury</strong>, <strong>School/Community</strong>, <strong>Family Impact</strong>, and <strong>Restricted/Repetitive Behaviors</strong>.</p>
+
+<p>The section header shows a live badge with the total score (e.g., <span class="badge green">8/36</span> <span class="badge amber">17/36</span> <span class="badge red">25/36</span>).</p>
+
+<h4>Section 3: Vineland-3 Adaptive Behavior</h4>
+<p>Enter <strong>standard scores</strong> (typically 20–160, mean=100) from the Vineland-3 assessment. Scores below 85 add hours; below 70 adds even more. Maximum adjustment: <strong>+12h</strong>.</p>
+
+<h4>Section 4: VB-MAPP Assessment</h4>
+<p>Enter scores from the VB-MAPP. Key rule: <strong>lower milestones = more hours; higher barriers = more hours</strong>. Maximum adjustment: <strong>+12h</strong>.</p>
+
+<h4>Section 5: Skill Deficit Domains</h4>
+<p>Click to select all applicable deficit areas (Communication, Social Skills, Play Skills, etc.). These drive the recommended number of treatment goals.</p>
+
+<h4>Section 6: Behavioral Assessment</h4>
+<p>Assess behavioral risk factors. Maximum adjustment: <strong>+16h</strong>.</p>
+<table>
+  <tr><th>Factor</th><th>Highest Impact</th></tr>
+  <tr><td>Aggression Frequency</td><td>Daily → +5h</td></tr>
+  <tr><td>Self-Injury Severity</td><td>Severe → +8h (also triggers high-risk override)</td></tr>
+  <tr><td>Crisis Events</td><td>2+ events → +8h</td></tr>
+  <tr><td>Elopement</td><td>Yes → +5h</td></tr>
+</table>
+
+<div class="callout red">
+  <strong>🔴 Safety Alert</strong>
+  If self-injury is rated "Severe," the system automatically prevents the age-based hour reduction for teenagers — ensuring high-risk patients get full recommended hours.
+</div>
+
+<h4>Section 7: Environmental Modifiers</h4>
+<p>Check applicable environmental stressors (school placement at risk, regression, caregiver burnout, etc.). Each adds <strong>+2h</strong>, up to <strong>+8h max</strong>.</p>
+
+<h4>Section 8: Risk Assessment</h4>
+<p>Rate 6 risk factors 0–4. If the total reaches <strong>≥15/24</strong>, a <span class="badge red">HIGH RISK</span> flag appears and the high-risk override activates.</p>
+
+<hr/>
+
+<div class="page-break"></div>
+<h3>Understanding the Results Panel</h3>
+
+<p>The sticky right panel contains these components (top to bottom):</p>
+
+<div class="step">
+  <div class="step-num teal">1</div>
+  <div class="step-content">
+    <strong>Dosage Recommendation</strong>
+    A large number (e.g., "30") showing final recommended hours/week, with a tier badge (Tier 1 Focused / Tier 2 Moderate / Tier 3 Intensive) and a line-by-line rationale explaining every calculation step.
+  </div>
+</div>
+<div class="step">
+  <div class="step-num teal">2</div>
+  <div class="step-content">
+    <strong>Breakdown Cards (2×2 grid)</strong>
+    Supervision hours, Parent Training hours, Recommended Goals, and Risk Score — each in a compact stat card with a colored left border.
+  </div>
+</div>
+<div class="step">
+  <div class="step-num teal">3</div>
+  <div class="step-content">
+    <strong>Clinical Flags (if triggered)</strong>
+    A red alert box listing any clinical concerns: high risk, severe impairment, significant behavioral risk, or multiple environmental stressors.
+  </div>
+</div>
+<div class="step">
+  <div class="step-num teal">4</div>
+  <div class="step-content">
+    <strong>AI Approval Predictor</strong>
+    An estimated approval probability (e.g., 72%), a progress bar, and a list of positive/negative factors. Marked with an <span class="badge purple">AI</span> badge.
+  </div>
+</div>
+<div class="step">
+  <div class="step-num teal">5</div>
+  <div class="step-content">
+    <strong>Submit Button</strong>
+    "Submit for Authorization" sends the complete assessment, calculation, and prediction to the insurance review queue.
+  </div>
+</div>
+
+<h3>ML Approval Predictor — What It Tells You</h3>
+<p>The AI predictor analyzes your assessment across 7 dimensions:</p>
+
+<table>
+  <tr><th>Factor</th><th>What Helps Approval</th><th>What Hurts Approval</th></tr>
+  <tr><td>FII Severity</td><td>Higher scores justify necessity</td><td>Low scores with high hours requested</td></tr>
+  <tr><td>Vineland Data</td><td>Including scores, especially low ones</td><td>Missing Vineland assessment</td></tr>
+  <tr><td>VB-MAPP Data</td><td>Including scores with clear deficits</td><td>Missing VB-MAPP assessment</td></tr>
+  <tr><td>Behavioral Risk</td><td>Documented behavioral concerns</td><td>High hours without behavioral justification</td></tr>
+  <tr><td>Hours Requested</td><td>Conservative / proportional to need</td><td>Maximum hours with moderate impairment</td></tr>
+  <tr><td>Skill Deficits</td><td>More domains documented (3+)</td><td>Few or no deficits documented</td></tr>
+  <tr><td>Safety Risks</td><td>High-risk flags strengthen necessity</td><td>N/A</td></tr>
+</table>
+
+<div class="pro-tip">
+  If the predictor shows "likely deny," don't just submit — review which factors are negative and see if additional standardized assessments (Vineland, VB-MAPP) can be added to strengthen the submission.
 </div>
 
 <h3>Submitting for Authorization</h3>
-<div class="step">
-  <div class="step-num">1</div>
-  <div class="step-content">
-    <strong>Review Your Assessment</strong>
-    Verify all sections are complete. Check the results panel for accuracy and review any clinical flags.
-  </div>
-</div>
-<div class="step">
-  <div class="step-num">2</div>
-  <div class="step-content">
-    <strong>Check the ML Predictor</strong>
-    Review the approval probability and factor list. If the prediction shows "likely deny," consider adding 
-    missing standardized assessments (Vineland, VB-MAPP) or documenting additional skill deficits.
-  </div>
-</div>
-<div class="step">
-  <div class="step-num">3</div>
-  <div class="step-content">
-    <strong>Click "Submit for Authorization"</strong>
-    The green button at the bottom of the results panel sends the complete assessment, calculation results, 
-    and ML prediction to the insurance review queue.
-  </div>
-</div>
-<div class="step">
-  <div class="step-num">4</div>
-  <div class="step-content">
-    <strong>Confirmation</strong>
-    A success screen confirms your submission. You can click "Start New Assessment" to begin another evaluation, 
-    or switch to the "My Claims" tab to track your submission.
-  </div>
-</div>
+<ol>
+  <li>Complete the assessment form (all 8 sections)</li>
+  <li>Review the results panel — check hours, tier, flags, and ML prediction</li>
+  <li>Click <strong>"Submit for Authorization"</strong></li>
+  <li>You'll see a success confirmation. Click "Start New Assessment" for the next patient, or switch to "My Claims" to track it.</li>
+</ol>
 
 <hr/>
 
-<h3>Tab 2: My Claims — Tracking Submissions</h3>
-<p>The <strong>My Claims</strong> tab shows all authorization requests you've submitted, displaying:</p>
+<h3>My Claims — Tracking Submissions</h3>
+<p>This tab shows all claims you've submitted as a list of cards. Each card displays the patient name, ID, age, diagnosis, recommended hours, tier, and current status.</p>
+
+<p><strong>Status badges:</strong></p>
+<table>
+  <tr><th>Status</th><th>Badge</th><th>Meaning</th></tr>
+  <tr><td>Submitted</td><td><span class="badge blue">Submitted</span></td><td>In the queue, awaiting review</td></tr>
+  <tr><td>Under Review</td><td><span class="badge amber">Under Review</span></td><td>Reviewer has started evaluation</td></tr>
+  <tr><td>Approved</td><td><span class="badge green">Approved</span></td><td>Authorization granted</td></tr>
+  <tr><td>Denied</td><td><span class="badge red">Denied</span></td><td>Authorization denied</td></tr>
+  <tr><td>Info Requested</td><td><span class="badge purple">Info Requested</span></td><td>Reviewer needs more documentation</td></tr>
+</table>
+
+<h3>Insights — Analytics Dashboard</h3>
+<p>Aggregate metrics across all your clinic's submissions:</p>
 <ul>
-  <li>Patient name and ID</li>
-  <li>Age and diagnosis</li>
-  <li>Recommended hours and tier</li>
-  <li>Current status badge</li>
+  <li><strong>Summary Row:</strong> Total Claims, Approved, Denied, Pending — as stat cards</li>
+  <li><strong>Approval Rate:</strong> A large progress bar showing the percentage of decided claims that were approved</li>
+  <li><strong>Average Metrics:</strong> Average recommended hours, average age, and most common tier</li>
 </ul>
 
-<p><strong>Status meanings:</strong></p>
-<table>
-  <tr><th>Status</th><th>Badge</th><th>What It Means</th></tr>
-  <tr><td>Submitted</td><td><span class="badge blue">Submitted</span></td><td>Claim is in the queue, not yet reviewed</td></tr>
-  <tr><td>Under Review</td><td><span class="badge amber">Under Review</span></td><td>A reviewer has started evaluating the claim</td></tr>
-  <tr><td>Approved</td><td><span class="badge green">Approved</span></td><td>Authorization granted for the requested hours</td></tr>
-  <tr><td>Denied</td><td><span class="badge red">Denied</span></td><td>Authorization denied — see reviewer notes</td></tr>
-  <tr><td>Info Requested</td><td><span class="badge purple">Info Requested</span></td><td>Reviewer needs additional documentation</td></tr>
-</table>
-
-<h3>Tab 3: Insights — Analytics Dashboard</h3>
-<p>The Insights tab provides aggregate metrics across all your clinic's submissions:</p>
-
-<table>
-  <tr><th>Metric</th><th>Description</th></tr>
-  <tr><td><strong>Total Claims</strong></td><td>Total number of submissions</td></tr>
-  <tr><td><strong>Approved</strong></td><td>Number of approved claims</td></tr>
-  <tr><td><strong>Denied</strong></td><td>Number of denied claims</td></tr>
-  <tr><td><strong>Pending</strong></td><td>Number still awaiting decision</td></tr>
-  <tr><td><strong>Approval Rate</strong></td><td>Percentage of decided claims that were approved (with visual progress bar)</td></tr>
-  <tr><td><strong>Avg Recommended Hours</strong></td><td>Average hours across all submissions</td></tr>
-  <tr><td><strong>Avg Age</strong></td><td>Average patient age across submissions</td></tr>
-  <tr><td><strong>Most Common Tier</strong></td><td>The tier most frequently assigned</td></tr>
-</table>
-
 <!-- ============================================================ -->
-<!-- SECTION 4: INSURANCE PORTAL -->
+<!-- SECTION 5: INSURANCE PORTAL -->
 <!-- ============================================================ -->
 <div class="page-break"></div>
-<h2>4. Insurance Portal — Complete Guide</h2>
+<h2>5. Insurance Portal — Complete Guide</h2>
 
 <h3>Portal Overview</h3>
-<p>The Insurance Portal is where claims reviewers and policy administrators manage authorization requests. 
-  It contains <strong>four tabs</strong>:</p>
+<p>The Insurance Portal has <strong>four tabs</strong>:</p>
 
 <table>
-  <tr><th>Tab</th><th>Icon</th><th>Purpose</th></tr>
+  <tr><th>Tab</th><th>Purpose</th><th>When to Use</th></tr>
   <tr>
-    <td><strong>Review Queue</strong></td>
-    <td>📥</td>
-    <td>Process pending authorization requests — review, approve, deny, or request more information</td>
+    <td><strong>📥 Review Queue</strong></td>
+    <td>Process pending authorization requests</td>
+    <td>Daily workflow — review, approve, deny, or request info</td>
   </tr>
   <tr>
-    <td><strong>Policy Calc</strong></td>
-    <td>🧮</td>
-    <td>Independent calculator for scenario analysis and policy validation</td>
+    <td><strong>🧮 Policy Calc</strong></td>
+    <td>Independent calculator for scenario analysis</td>
+    <td>To verify a clinic's calculation or test policy changes</td>
   </tr>
   <tr>
-    <td><strong>Decisions</strong></td>
-    <td>⚖️</td>
-    <td>Historical record of all decisions made</td>
+    <td><strong>⚖️ Decisions</strong></td>
+    <td>View all historical decisions</td>
+    <td>Auditing, pattern analysis, reporting</td>
   </tr>
   <tr>
-    <td><strong>Policy Config</strong></td>
-    <td>⚙️</td>
-    <td>Manage payer profiles — adjust weights, limits, and multipliers</td>
+    <td><strong>⚙️ Policy Config</strong></td>
+    <td>Manage payer profile parameters</td>
+    <td>When policy limits or weights need adjustment</td>
   </tr>
 </table>
 
 <hr/>
 
-<h3>Tab 1: Review Queue — Processing Claims</h3>
-<p>The Review Queue is the primary workspace for claims reviewers. It shows:</p>
+<h3>Review Queue — Processing Claims</h3>
+<p>This is the primary workspace for claims reviewers.</p>
 
-<h4>Summary Dashboard (Top Row)</h4>
-<p>Four stat cards at the top give you a quick overview:</p>
-<ul>
-  <li><strong>In Queue</strong> — Claims awaiting decision</li>
-  <li><strong>Approved</strong> — Total approved claims</li>
-  <li><strong>Denied</strong> — Total denied claims</li>
-  <li><strong>Total</strong> — All claims in the system</li>
-</ul>
+<h4>Dashboard Summary (Top)</h4>
+<p>Four stat cards give you an instant overview: <strong>In Queue</strong>, <strong>Approved</strong>, <strong>Denied</strong>, and <strong>Total</strong>.</p>
 
-<h4>Pending Review Section</h4>
-<p>Each pending claim appears as a <strong>collapsible card</strong>. The collapsed view shows:</p>
-<ul>
-  <li>Patient name, age, diagnosis</li>
-  <li>Requested hours per week</li>
-  <li>ML-estimated approval probability</li>
-  <li>Current status badge</li>
-</ul>
-
-<h4>Expanding a Claim for Review</h4>
-<p>Click on any claim card to expand it. The expanded view shows:</p>
+<h4>Pending Claims</h4>
+<p>Each pending claim appears as a collapsible card showing patient info, requested hours, ML-estimated approval probability, and status. Click to expand and see:</p>
 
 <div class="step">
   <div class="step-num">1</div>
   <div class="step-content">
     <strong>Calculation Breakdown</strong>
-    Four summary boxes: FII Score, Base Hours, Final Hours, and Tier — giving you an instant overview 
-    of how the recommendation was calculated.
+    Four summary boxes: FII Score, Base Hours, Final Hours, and Tier.
   </div>
 </div>
 <div class="step">
   <div class="step-num">2</div>
   <div class="step-content">
-    <strong>Calculation Rationale</strong>
-    The step-by-step logic trail: base hours from FII, each adjustment (Vineland, VB-MAPP, Behavioral, 
-    Environmental), age multiplier, and final clamped result. This is the same rationale the clinic saw.
+    <strong>Full Rationale</strong>
+    The same step-by-step logic trail the clinic saw — every adjustment explained.
   </div>
 </div>
 <div class="step">
   <div class="step-num">3</div>
   <div class="step-content">
     <strong>Clinical Flags</strong>
-    If the patient triggered any clinical alerts (high risk, severe impairment, etc.), they appear in a 
-    red highlighted box for immediate attention.
+    Any triggered alerts (high risk, severe impairment) shown in a red box.
   </div>
 </div>
 <div class="step">
   <div class="step-num">4</div>
   <div class="step-content">
-    <strong>Review Notes &amp; Actions</strong>
-    A text area for entering optional review notes, followed by the action buttons.
+    <strong>Review Notes + Action Buttons</strong>
+    A text area for notes, followed by four decision buttons.
   </div>
 </div>
 
 <h3>Making Decisions</h3>
-<p>When reviewing a claim, you have <strong>four action buttons</strong>:</p>
+<p>Four actions are available for each claim:</p>
 
 <table>
-  <tr><th>Action</th><th>Button Color</th><th>Effect</th></tr>
+  <tr><th>Action</th><th>Button</th><th>Effect</th></tr>
   <tr>
     <td><strong>Approve</strong></td>
-    <td><span class="badge green">✓ Approve</span></td>
-    <td>Grants authorization. Sets approved hours = recommended hours. Claim moves to "Resolved."</td>
+    <td style="color: var(--success); font-weight: 600;">✓ Approve</td>
+    <td>Grants authorization. Claim moves to Resolved.</td>
   </tr>
   <tr>
     <td><strong>Deny</strong></td>
-    <td><span class="badge red">✗ Deny</span></td>
-    <td>Denies authorization. Claim moves to "Resolved." Notes should explain the reason.</td>
+    <td style="color: var(--critical); font-weight: 600;">✗ Deny</td>
+    <td>Denies authorization. Add notes explaining the reason.</td>
   </tr>
   <tr>
     <td><strong>Request Info</strong></td>
-    <td><span class="badge purple">💬 Request Info</span></td>
-    <td>Requests additional documentation from the clinic. Claim stays in queue with updated status.</td>
+    <td style="color: var(--primary); font-weight: 600;">💬 Request Info</td>
+    <td>Asks clinic for additional documentation. Claim stays in queue.</td>
   </tr>
   <tr>
     <td><strong>Mark Reviewing</strong></td>
-    <td><span class="badge amber">🕐 Mark Reviewing</span></td>
-    <td>Indicates you've started reviewing but haven't made a decision yet. Useful for workload management.</td>
+    <td style="color: var(--warning); font-weight: 600;">🕐 Mark Reviewing</td>
+    <td>Signals you've started but haven't decided yet.</td>
   </tr>
 </table>
 
-<div class="callout">
-  <strong>💡 Best Practice</strong>
-  Always add review notes when denying a claim or requesting information. This creates an audit trail and 
-  helps the clinic understand what additional documentation is needed.
+<div class="pro-tip">
+  Always add review notes when denying or requesting info. It creates an audit trail and helps clinics understand what's needed.
 </div>
-
-<h4>Resolved Claims</h4>
-<p>Claims that have been approved or denied move to the "Resolved" section at the bottom of the queue, 
-  shown in a slightly dimmed appearance with their final status badge.</p>
 
 <hr/>
 
-<h3>Tab 2: Policy Calculator — Scenario Analysis</h3>
-<p>The Policy Calculator provides insurance reviewers with their <strong>own independent calculator</strong>. 
-  This is identical to the clinic's calculator but with an added ability to <strong>override the maximum hours</strong> 
-  for policy testing.</p>
-
-<p><strong>Use cases:</strong></p>
+<h3>Policy Calculator — Scenario Analysis</h3>
+<p>An independent copy of the full calculator, available to insurance reviewers. Use it to:</p>
 <ul>
-  <li>Independently verify a clinic's submitted calculation by entering the same assessment data</li>
-  <li>Run "what-if" scenarios with different clinical values</li>
-  <li>Test how policy changes (e.g., lower max hours) would affect recommendations</li>
-  <li>Train new reviewers on how the calculation engine works</li>
+  <li><strong>Verify</strong> a clinic's submitted calculation by entering the same data</li>
+  <li><strong>Test "what-if" scenarios</strong> with different clinical values</li>
+  <li><strong>Simulate policy changes</strong> using the "Max Hours Override" field</li>
+  <li><strong>Train new reviewers</strong> on how the calculation engine works</li>
 </ul>
 
-<div class="callout purple">
+<div class="callout blue">
   <strong>🔍 Key Difference from Clinic Calculator</strong>
-  The Policy Calculator includes a <strong>"Max Hours Override"</strong> field at the top that lets you test 
-  scenarios with different policy limits without permanently changing the payer profile.
+  The Policy Calculator includes a <strong>"Max Hours Override"</strong> field for testing different policy caps without permanently changing the payer profile.
 </div>
 
-<hr/>
+<h3>Decisions — Historical Record</h3>
+<p>A comprehensive view of all resolved claims with summary stats (Total Decisions, Approved, Denied, Approval Rate) and a scrollable decision history list.</p>
 
-<h3>Tab 3: Decisions — Historical Record</h3>
-<p>The Decisions tab provides a comprehensive record of all resolved claims with:</p>
-<ul>
-  <li>Summary statistics: Total Decisions, Approved count, Denied count, Approval Rate</li>
-  <li>A scrollable list of all decided claims with patient details, hours, tier, and status</li>
-  <li>Review notes visible for each decision (if provided)</li>
-</ul>
-<p>This tab is useful for auditing, pattern analysis, and reporting on utilization management performance.</p>
-
-<hr/>
-
-<h3>Tab 4: Policy Configuration — Managing Payer Profiles</h3>
-<p>The Policy Configuration tab allows authorized users to create and manage <strong>payer profiles</strong> — 
-  sets of policy parameters that influence how the dosage calculation is weighted.</p>
-
-<h4>Pre-Loaded Profiles</h4>
-<p>The system comes with three pre-configured profiles:</p>
+<h3>Policy Configuration — Managing Payer Profiles</h3>
+<p>This tab lets you configure how the calculation engine is weighted. The system comes with <strong>three pre-loaded profiles</strong>:</p>
 
 <table>
   <tr><th>Profile</th><th>Max Hours</th><th>Min Hours</th><th>Character</th></tr>
   <tr><td><strong>Default</strong></td><td>40</td><td>10</td><td>Standard weights across all domains</td></tr>
-  <tr><td><strong>Conservative</strong></td><td>30</td><td>10</td><td>Lower max hours, reduced domain weights — represents cost-conscious payers</td></tr>
-  <tr><td><strong>Progressive</strong></td><td>40</td><td>15</td><td>Higher minimum, boosted weights — represents clinically-oriented payers</td></tr>
+  <tr><td><strong>Conservative</strong></td><td>30</td><td>10</td><td>Lower caps, reduced domain weights — cost-conscious</td></tr>
+  <tr><td><strong>Progressive</strong></td><td>40</td><td>15</td><td>Higher minimums, boosted weights — clinically-oriented</td></tr>
 </table>
 
-<h4>Configurable Parameters</h4>
-<p>Each profile has four groups of settings:</p>
+<p><strong>Configuration sections:</strong></p>
+<ul>
+  <li><strong>Hour Limits</strong> — Maximum and minimum weekly hours</li>
+  <li><strong>Domain Weights</strong> — Adjust how much each assessment area (FII, Vineland, VB-MAPP, Behavioral, Environmental) influences the result. 1.0 = standard; 0.8 = reduced; 1.2 = boosted.</li>
+  <li><strong>Age Multipliers</strong> — Young (≤5), Mid (6–12), Teen (13+) adjustments</li>
+  <li><strong>Supervision &amp; Parent Training</strong> — Supervision percentage and parent training hour range</li>
+</ul>
 
-<p><strong>Hour Limits</strong></p>
-<table>
-  <tr><th>Parameter</th><th>Description</th><th>Default</th></tr>
-  <tr><td>Maximum Hours/Week</td><td>Upper cap for any recommendation</td><td>40</td></tr>
-  <tr><td>Minimum Hours/Week</td><td>Floor — no recommendation goes below this</td><td>10</td></tr>
-</table>
-
-<p><strong>Domain Weights</strong> — Multipliers that adjust how much each assessment domain influences the final calculation:</p>
-<table>
-  <tr><th>Weight</th><th>What It Affects</th><th>Default</th></tr>
-  <tr><td>FII Weight</td><td>Impact of Functional Impairment Index</td><td>1.0</td></tr>
-  <tr><td>Vineland Weight</td><td>Impact of Vineland-3 scores</td><td>1.0</td></tr>
-  <tr><td>VB-MAPP Weight</td><td>Impact of VB-MAPP assessment</td><td>1.0</td></tr>
-  <tr><td>Behavioral Weight</td><td>Impact of behavioral risk assessment</td><td>1.0</td></tr>
-  <tr><td>Environmental Weight</td><td>Impact of environmental modifiers</td><td>1.0</td></tr>
-</table>
-<p>A weight of 1.0 = standard impact. Setting to 0.8 = 80% impact (reduces influence). Setting to 1.2 = 120% impact (increases influence).</p>
-
-<p><strong>Age Multipliers</strong> — Adjust how age affects the final recommendation:</p>
-<table>
-  <tr><th>Age Group</th><th>Ages</th><th>Default Multiplier</th><th>Effect</th></tr>
-  <tr><td>Young</td><td>≤5 years</td><td>1.20</td><td>20% boost — early intervention priority</td></tr>
-  <tr><td>Mid</td><td>6–12 years</td><td>1.00</td><td>No change</td></tr>
-  <tr><td>Teen</td><td>13+ years</td><td>0.85</td><td>15% reduction — accounts for school/maturity</td></tr>
-</table>
-
-<p><strong>Supervision &amp; Parent Training</strong></p>
-<table>
-  <tr><th>Parameter</th><th>Description</th><th>Default</th></tr>
-  <tr><td>Supervision %</td><td>Base percentage of total hours designated for BCBA supervision</td><td>0.15 (15%)</td></tr>
-  <tr><td>Parent Training Min</td><td>Minimum parent training hours per week</td><td>2</td></tr>
-  <tr><td>Parent Training Max</td><td>Maximum parent training hours per week</td><td>8</td></tr>
-</table>
-
-<p>After making changes, click <strong>"Save Configuration"</strong> to persist the updated profile.</p>
+<p>Click <strong>"Save Configuration"</strong> to persist changes. A green "Saved!" badge confirms success.</p>
 
 <!-- ============================================================ -->
-<!-- SECTION 5: ALGORITHM -->
+<!-- SECTION 6: ALGORITHM -->
 <!-- ============================================================ -->
 <div class="page-break"></div>
-<h2>5. The 7-Step Dosage Algorithm</h2>
+<h2>6. The 7-Step Dosage Algorithm</h2>
 
-<h3>Algorithm Overview</h3>
-<p>The dosage determination follows a structured, transparent 7-step process. Each step builds on the previous 
-  one, and every adjustment is documented in the rationale trail.</p>
+<h3>How the Calculation Works</h3>
+<p>Every recommendation follows this pipeline — each step builds on the last, and every adjustment is documented in the rationale trail:</p>
 
 <div class="flow">
-  <div class="flow-box blue">Step 1: FII → Base</div>
+  <div class="flow-box blue">1. FII → Base</div>
   <div class="flow-arrow">→</div>
-  <div class="flow-box">Step 2: +Vineland</div>
+  <div class="flow-box">2. +Vineland</div>
   <div class="flow-arrow">→</div>
-  <div class="flow-box">Step 3: +VB-MAPP</div>
+  <div class="flow-box">3. +VB-MAPP</div>
   <div class="flow-arrow">→</div>
-  <div class="flow-box">Step 4: +Behavioral</div>
+  <div class="flow-box">4. +Behavioral</div>
   <div class="flow-arrow">→</div>
-  <div class="flow-box">Step 5: +Environmental</div>
+  <div class="flow-box">5. +Environmental</div>
   <div class="flow-arrow">→</div>
-  <div class="flow-box">Step 6: ×Age</div>
+  <div class="flow-box">6. ×Age</div>
   <div class="flow-arrow">→</div>
-  <div class="flow-box green">Step 7: Final</div>
+  <div class="flow-box green">7. Final</div>
 </div>
 
-<h3>Step-by-Step Explanation</h3>
-
-<h4>Step 1: FII → Base Hours</h4>
-<p>The total FII score (sum of all 9 domain ratings) maps directly to base hours:</p>
 <table>
-  <tr><th>FII Score Range</th><th>Base Hours</th><th>Interpretation</th></tr>
-  <tr><td>0–8</td><td>10 hours</td><td>Mild impairment</td></tr>
-  <tr><td>9–16</td><td>20 hours</td><td>Moderate impairment</td></tr>
-  <tr><td>17–24</td><td>30 hours</td><td>Severe impairment</td></tr>
-  <tr><td>25–36</td><td>35 hours</td><td>Profound impairment</td></tr>
+  <tr><th>Step</th><th>What Happens</th><th>Max Impact</th></tr>
+  <tr>
+    <td><strong>1. FII → Base Hours</strong></td>
+    <td>Total FII score (0–36) maps to base hours: 0–8 → 10h, 9–16 → 20h, 17–24 → 30h, 25–36 → 35h</td>
+    <td>35h base</td>
+  </tr>
+  <tr>
+    <td><strong>2. Vineland-3 Adjustment</strong></td>
+    <td>Domains below 85 add +2h each; domains below 70 add additional +4h; composite below 70 adds +4h</td>
+    <td>+12h</td>
+  </tr>
+  <tr>
+    <td><strong>3. VB-MAPP Adjustment</strong></td>
+    <td>Low milestones, high barriers, and low transition scores each add hours</td>
+    <td>+12h</td>
+  </tr>
+  <tr>
+    <td><strong>4. Behavioral Adjustment</strong></td>
+    <td>Aggression, self-injury, elopement, and crisis events each add hours based on severity</td>
+    <td>+16h</td>
+  </tr>
+  <tr>
+    <td><strong>5. Environmental Adjustment</strong></td>
+    <td>Each environmental stressor adds +2h</td>
+    <td>+8h</td>
+  </tr>
+  <tr>
+    <td><strong>6. Age Multiplier</strong></td>
+    <td>Young (≤5) × 1.20 boost; Mid (6–12) × 1.00; Teen (13+) × 0.85 reduction. <em>Overridden to ×1.00 if high-risk.</em></td>
+    <td>±20%</td>
+  </tr>
+  <tr>
+    <td><strong>7. Final Clamping</strong></td>
+    <td>Result rounded to nearest 5, clamped between policy min and max (default: 10–40h)</td>
+    <td>—</td>
+  </tr>
 </table>
-
-<h4>Step 2: Vineland-3 Adjustment (max +12h)</h4>
-<p>Based on how many domain scores fall below clinical thresholds:</p>
-<ul>
-  <li>1 domain below 85 → +2h</li>
-  <li>2 domains below 85 → +4h</li>
-  <li>3 domains below 85 → +6h</li>
-  <li>4 domains below 85 → +8h</li>
-  <li>Any domain below 70 → additional +4h</li>
-  <li>Composite below 70 → additional +4h</li>
-</ul>
-
-<h4>Step 3: VB-MAPP Adjustment (max +12h)</h4>
-<ul>
-  <li>Milestones ≤45 → +6h; 46–100 → +3h</li>
-  <li>Barriers ≥19 → +6h; 13–18 → +4h; 7–12 → +2h</li>
-  <li>Transition ≤6 → +2h; 7–12 → +1h</li>
-</ul>
-
-<h4>Step 4: Behavioral Risk Adjustment (max +16h)</h4>
-<ul>
-  <li>Daily aggression → +5h; 6+/month → +3h</li>
-  <li>Severe self-injury → +8h; Moderate → +5h; Mild → +3h</li>
-  <li>Elopement → +5h</li>
-  <li>2+ crisis events → +8h; 1 event → +5h</li>
-</ul>
-
-<h4>Step 5: Environmental Adjustment (max +8h)</h4>
-<p>Each checked environmental modifier adds +2h, up to a maximum of +8h.</p>
-
-<h4>Step 6: Age Multiplier</h4>
-<p>The sum of (base + adjustments) is multiplied by the age factor:</p>
-<ul>
-  <li>Ages ≤5 → ×1.20 (early intervention boost)</li>
-  <li>Ages 6–12 → ×1.00 (no change)</li>
-  <li>Ages 13+ → ×0.85 (teen reduction)</li>
-</ul>
-
-<div class="callout red">
-  <strong>⚡ High-Risk Override</strong>
-  If the risk score ≥15 OR self-injury is rated "Severe," the age multiplier is forced to ×1.00 regardless of age. 
-  This prevents the teen reduction from applying to high-risk patients.
-</div>
-
-<h4>Step 7: Final Recommendation</h4>
-<p>The raw result is:</p>
-<ol>
-  <li><strong>Rounded</strong> to the nearest 5 hours</li>
-  <li><strong>Clamped</strong> between the payer's minimum and maximum hours</li>
-</ol>
 
 <h3>Understanding Tiers</h3>
 <table>
-  <tr><th>Tier</th><th>Hours Range</th><th>Name</th><th>Supervision %</th><th>Parent Training</th></tr>
-  <tr><td><strong>Tier 1</strong></td><td>&lt; 20h</td><td>Focused</td><td>10%</td><td>2h/wk (low)</td></tr>
-  <tr><td><strong>Tier 2</strong></td><td>20–29h</td><td>Moderate</td><td>15%</td><td>5h/wk (mid)</td></tr>
-  <tr><td><strong>Tier 3</strong></td><td>30+h</td><td>Intensive</td><td>20%</td><td>8h/wk (high)</td></tr>
+  <tr><th>Tier</th><th>Hours</th><th>Name</th><th>Supervision</th><th>Parent Training</th></tr>
+  <tr><td><strong>Tier 1</strong></td><td>&lt; 20h</td><td>Focused</td><td>10%</td><td>2h/wk</td></tr>
+  <tr><td><strong>Tier 2</strong></td><td>20–29h</td><td>Moderate</td><td>15%</td><td>5h/wk</td></tr>
+  <tr><td><strong>Tier 3</strong></td><td>30+h</td><td>Intensive</td><td>20%</td><td>8h/wk</td></tr>
 </table>
 
 <h3>Clinical Flags &amp; Risk Indicators</h3>
 <table>
-  <tr><th>Flag</th><th>Trigger Condition</th><th>Action Required</th></tr>
-  <tr><td><span class="badge red">HIGH RISK</span></td><td>Risk score ≥15 or severe self-injury</td><td>Safety plan must be developed. Age multiplier override activated.</td></tr>
+  <tr><th>Flag</th><th>Trigger</th><th>What Happens</th></tr>
+  <tr><td><span class="badge red">HIGH RISK</span></td><td>Risk score ≥15 or severe self-injury</td><td>Age multiplier overridden to ×1.00. Safety plan required.</td></tr>
   <tr><td><span class="badge red">Severe Functional Impairment</span></td><td>FII ≥25</td><td>Consider Tier 3 intensive services</td></tr>
   <tr><td><span class="badge amber">Significant Behavioral Risk</span></td><td>Behavioral adjustment ≥10</td><td>Behavioral intervention plan required</td></tr>
-  <tr><td><span class="badge amber">Multiple Environmental Stressors</span></td><td>Environmental adjustment ≥6</td><td>Consider environmental supports and wrap-around services</td></tr>
+  <tr><td><span class="badge amber">Multiple Environmental Stressors</span></td><td>Environmental adjustment ≥6</td><td>Consider wrap-around services</td></tr>
 </table>
 
 <!-- ============================================================ -->
-<!-- SECTION 6: E2E WORKFLOW -->
+<!-- SECTION 7: E2E WORKFLOW -->
 <!-- ============================================================ -->
 <div class="page-break"></div>
-<h2>6. End-to-End Workflow</h2>
+<h2>7. End-to-End Workflow</h2>
 
 <h3>Complete Claims Pipeline</h3>
-<p>The following diagram shows the complete lifecycle of an authorization request, from assessment to decision:</p>
+<p>This is the full lifecycle of an authorization request:</p>
 
 <div class="flow" style="flex-direction: column; align-items: stretch; gap: 0;">
-  <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0;">
-    <div class="flow-box green" style="width: 180px; text-align: center;">1. Clinician Assessment</div>
-    <div style="flex: 1; font-size: 9.5pt; color: #475569;">BCBA enters patient demographics, FII ratings, Vineland-3 scores, VB-MAPP, behavioral data, environmental factors, and risk ratings into the Calculator.</div>
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+    <div class="flow-box teal" style="width: 200px; text-align: center; flex-shrink: 0;">1. Clinician Assessment</div>
+    <div style="flex: 1; font-size: 10pt; color: var(--body);">BCBA enters patient data across all 8 assessment sections in the Calculator tab.</div>
   </div>
-  <div style="text-align: center; color: #94a3b8; font-size: 14pt;">↓</div>
-  <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0;">
-    <div class="flow-box green" style="width: 180px; text-align: center;">2. Live Calculation</div>
-    <div style="flex: 1; font-size: 9.5pt; color: #475569;">System runs 7-step algorithm in real-time, displaying recommended hours, tier, supervision, parent training, goals, risk score, clinical flags, and ML approval prediction.</div>
+  <div style="text-align: center; color: var(--placeholder); font-size: 14pt;">↓</div>
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+    <div class="flow-box teal" style="width: 200px; text-align: center; flex-shrink: 0;">2. Live Calculation</div>
+    <div style="flex: 1; font-size: 10pt; color: var(--body);">System runs the 7-step algorithm in real time. Clinician reviews hours, tier, flags, and ML prediction.</div>
   </div>
-  <div style="text-align: center; color: #94a3b8; font-size: 14pt;">↓</div>
-  <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0;">
-    <div class="flow-box green" style="width: 180px; text-align: center;">3. Submit Claim</div>
-    <div style="flex: 1; font-size: 9.5pt; color: #475569;">Clinician clicks "Submit for Authorization." Complete assessment data, calculation results, and ML prediction are sent to the insurance queue.</div>
+  <div style="text-align: center; color: var(--placeholder); font-size: 14pt;">↓</div>
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+    <div class="flow-box teal" style="width: 200px; text-align: center; flex-shrink: 0;">3. Submit Claim</div>
+    <div style="flex: 1; font-size: 10pt; color: var(--body);">Clinician clicks "Submit for Authorization." Complete data is sent to the insurance review queue.</div>
   </div>
-  <div style="text-align: center; color: #94a3b8; font-size: 14pt;">↓</div>
-  <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0;">
-    <div class="flow-box purple" style="width: 180px; text-align: center;">4. Insurance Review</div>
-    <div style="flex: 1; font-size: 9.5pt; color: #475569;">Claims reviewer opens the claim in the Review Queue, examines the calculation breakdown, rationale, and clinical flags. May independently verify using Policy Calculator.</div>
+  <div style="text-align: center; color: var(--placeholder); font-size: 14pt;">↓</div>
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+    <div class="flow-box blue" style="width: 200px; text-align: center; flex-shrink: 0;">4. Insurance Review</div>
+    <div style="flex: 1; font-size: 10pt; color: var(--body);">Reviewer opens the claim, examines the calculation breakdown, rationale, and flags. May verify independently using Policy Calculator.</div>
   </div>
-  <div style="text-align: center; color: #94a3b8; font-size: 14pt;">↓</div>
-  <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0;">
-    <div class="flow-box purple" style="width: 180px; text-align: center;">5. Decision</div>
-    <div style="flex: 1; font-size: 9.5pt; color: #475569;">Reviewer approves, denies, marks reviewing, or requests additional information. Notes are added to the audit trail.</div>
+  <div style="text-align: center; color: var(--placeholder); font-size: 14pt;">↓</div>
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+    <div class="flow-box blue" style="width: 200px; text-align: center; flex-shrink: 0;">5. Decision</div>
+    <div style="flex: 1; font-size: 10pt; color: var(--body);">Reviewer approves, denies, requests info, or marks reviewing. Notes are recorded for audit trail.</div>
   </div>
-  <div style="text-align: center; color: #94a3b8; font-size: 14pt;">↓</div>
-  <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0;">
-    <div class="flow-box blue" style="width: 180px; text-align: center;">6. Status Update</div>
-    <div style="flex: 1; font-size: 9.5pt; color: #475569;">Clinic sees the updated status in "My Claims" tab. Both portals can track the claim through the complete lifecycle. Decision appears in Insights and Decision History.</div>
+  <div style="text-align: center; color: var(--placeholder); font-size: 14pt;">↓</div>
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+    <div class="flow-box green" style="width: 200px; text-align: center; flex-shrink: 0;">6. Status Update</div>
+    <div style="flex: 1; font-size: 10pt; color: var(--body);">Clinic sees updated status in "My Claims." Both portals track the claim through its full lifecycle.</div>
   </div>
 </div>
 
 <!-- ============================================================ -->
-<!-- SECTION 7: REFERENCE -->
+<!-- SECTION 8: REFERENCE -->
 <!-- ============================================================ -->
 <div class="page-break"></div>
-<h2>7. Reference Tables &amp; Appendices</h2>
+<h2>8. Reference &amp; FAQ</h2>
 
 <h3>Status Definitions</h3>
 <table>
-  <tr><th>Status</th><th>Who Sets It</th><th>Meaning</th><th>Next Steps</th></tr>
-  <tr><td><span class="badge blue">Submitted</span></td><td>System (auto)</td><td>Claim has been submitted and is awaiting review</td><td>Claim appears in Insurance Review Queue</td></tr>
-  <tr><td><span class="badge amber">Under Review</span></td><td>Insurance Reviewer</td><td>Reviewer has started examining the claim</td><td>Reviewer continues evaluation</td></tr>
-  <tr><td><span class="badge green">Approved</span></td><td>Insurance Reviewer</td><td>Authorization granted for requested hours</td><td>Clinic can begin/continue treatment</td></tr>
-  <tr><td><span class="badge red">Denied</span></td><td>Insurance Reviewer</td><td>Authorization denied</td><td>Clinic reviews notes, may resubmit with additional data</td></tr>
-  <tr><td><span class="badge purple">Info Requested</span></td><td>Insurance Reviewer</td><td>Additional documentation needed</td><td>Clinic provides requested information</td></tr>
+  <tr><th>Status</th><th>Set By</th><th>Meaning</th><th>Next Step</th></tr>
+  <tr><td><span class="badge blue">Submitted</span></td><td>System</td><td>Awaiting review</td><td>Appears in Insurance Review Queue</td></tr>
+  <tr><td><span class="badge amber">Under Review</span></td><td>Reviewer</td><td>Evaluation in progress</td><td>Reviewer continues assessment</td></tr>
+  <tr><td><span class="badge green">Approved</span></td><td>Reviewer</td><td>Authorization granted</td><td>Treatment can proceed</td></tr>
+  <tr><td><span class="badge red">Denied</span></td><td>Reviewer</td><td>Authorization denied</td><td>Clinic reviews notes, may resubmit</td></tr>
+  <tr><td><span class="badge purple">Info Requested</span></td><td>Reviewer</td><td>More documentation needed</td><td>Clinic provides requested info</td></tr>
 </table>
 
-<h3>FII Domain Scoring Reference</h3>
+<h3>FII Domain Scoring Guide</h3>
 <table>
-  <tr><th>Domain</th><th>Score 0 (None)</th><th>Score 1 (Mild)</th><th>Score 2 (Moderate)</th><th>Score 3 (Severe)</th><th>Score 4 (Profound)</th></tr>
+  <tr><th>Domain</th><th>0 (None)</th><th>1 (Mild)</th><th>2 (Moderate)</th><th>3 (Severe)</th><th>4 (Profound)</th></tr>
   <tr><td><strong>Communication</strong></td><td>Age-appropriate</td><td>Minor delays</td><td>Limited functional language</td><td>Very few words/signs</td><td>Non-verbal</td></tr>
   <tr><td><strong>Social Reciprocity</strong></td><td>Typical interaction</td><td>Occasional difficulty</td><td>Inconsistent engagement</td><td>Rarely initiates</td><td>No social response</td></tr>
-  <tr><td><strong>Adaptive Skills</strong></td><td>Independent</td><td>Needs occasional prompts</td><td>Requires regular support</td><td>Significant assistance</td><td>Total dependence</td></tr>
-  <tr><td><strong>Emotional Regulation</strong></td><td>Self-regulates</td><td>Occasional meltdowns</td><td>Frequent dysregulation</td><td>Daily crises</td><td>Constant dysregulation</td></tr>
+  <tr><td><strong>Adaptive Skills</strong></td><td>Independent</td><td>Occasional prompts</td><td>Regular support</td><td>Significant assistance</td><td>Total dependence</td></tr>
+  <tr><td><strong>Emotional Regulation</strong></td><td>Self-regulates</td><td>Occasional meltdowns</td><td>Frequent dysregulation</td><td>Daily crises</td><td>Constant</td></tr>
   <tr><td><strong>Safety / Aggression</strong></td><td>No concerns</td><td>Minor incidents</td><td>Regular aggression</td><td>Frequent/intense</td><td>Dangerous</td></tr>
   <tr><td><strong>Self-Injury</strong></td><td>None</td><td>Minor</td><td>Regular</td><td>Causing injury</td><td>Life-threatening</td></tr>
   <tr><td><strong>School / Community</strong></td><td>Full participation</td><td>Some accommodations</td><td>Significant support</td><td>Restricted access</td><td>Cannot participate</td></tr>
-  <tr><td><strong>Family Impact</strong></td><td>Minimal</td><td>Some stress</td><td>Significant burden</td><td>Major family disruption</td><td>Crisis-level</td></tr>
+  <tr><td><strong>Family Impact</strong></td><td>Minimal</td><td>Some stress</td><td>Significant burden</td><td>Major disruption</td><td>Crisis-level</td></tr>
   <tr><td><strong>RRB</strong></td><td>None</td><td>Mild patterns</td><td>Interfering</td><td>Dominating</td><td>All-consuming</td></tr>
 </table>
 
-<h3>Payer Profile Parameters Summary</h3>
+<h3>Payer Profile Comparison</h3>
 <table>
   <tr><th>Parameter</th><th>Default</th><th>Conservative</th><th>Progressive</th></tr>
   <tr><td>Max Hours</td><td>40</td><td>30</td><td>40</td></tr>
@@ -1298,9 +983,9 @@
   <tr><td>VB-MAPP Weight</td><td>1.0</td><td>0.8</td><td>1.1</td></tr>
   <tr><td>Behavioral Weight</td><td>1.0</td><td>0.9</td><td>1.2</td></tr>
   <tr><td>Environmental Weight</td><td>1.0</td><td>0.7</td><td>1.1</td></tr>
-  <tr><td>Age (Young) Mult</td><td>1.20</td><td>1.10</td><td>1.25</td></tr>
-  <tr><td>Age (Mid) Mult</td><td>1.00</td><td>1.00</td><td>1.00</td></tr>
-  <tr><td>Age (Teen) Mult</td><td>0.85</td><td>0.80</td><td>0.90</td></tr>
+  <tr><td>Age (Young ≤5)</td><td>×1.20</td><td>×1.10</td><td>×1.25</td></tr>
+  <tr><td>Age (Mid 6–12)</td><td>×1.00</td><td>×1.00</td><td>×1.00</td></tr>
+  <tr><td>Age (Teen 13+)</td><td>×0.85</td><td>×0.80</td><td>×0.90</td></tr>
   <tr><td>Supervision %</td><td>15%</td><td>12%</td><td>18%</td></tr>
   <tr><td>Parent Training</td><td>2–8h</td><td>2–6h</td><td>3–10h</td></tr>
 </table>
@@ -1308,48 +993,50 @@
 <div class="page-break"></div>
 <h3>Frequently Asked Questions</h3>
 
-<h4>Q: Why doesn't the calculation update when I fill in the form?</h4>
-<p><strong>A:</strong> The calculation requires a valid <strong>Age</strong> value (2–21) before it activates. 
-  Enter the patient's age in Section 1 and the results panel will begin updating in real time.</p>
+<h4>Q: Why doesn't the calculation update?</h4>
+<p><strong>A:</strong> Enter a valid <strong>Age</strong> (2–21) in Section 1. The calculation won't start until age is provided.</p>
 
-<h4>Q: Can I save a partially completed assessment and come back later?</h4>
-<p><strong>A:</strong> In the current demo version, assessments are not saved until submitted. It's best to 
-  complete the full assessment in one session. This feature is planned for a future release.</p>
+<h4>Q: Can I save a partially completed assessment?</h4>
+<p><strong>A:</strong> In the current version, assessments aren't saved until submitted. Complete the full assessment in one session.</p>
 
-<h4>Q: Why does a 15-year-old get fewer recommended hours than a 4-year-old with the same assessment data?</h4>
-<p><strong>A:</strong> The algorithm applies an <strong>age multiplier</strong> that boosts hours for young children 
-  (early intervention) and slightly reduces hours for teens (who typically receive school-based supports). 
-  However, if the patient is flagged as high-risk, the teen reduction is <em>overridden</em> to ensure safety.</p>
+<h4>Q: Why does a teenager get fewer hours than a young child with the same scores?</h4>
+<p><strong>A:</strong> The age multiplier gives a 20% boost for children ≤5 (early intervention) and a 15% reduction for teens (who get school supports). <strong>Exception:</strong> High-risk patients bypass the teen reduction entirely.</p>
 
-<h4>Q: What does the ML Approval Predictor actually predict?</h4>
-<p><strong>A:</strong> It estimates the probability that a typical insurance payer would approve the authorization 
-  request based on the completeness and severity of the clinical data provided. It considers factors like whether 
-  standardized assessments (Vineland, VB-MAPP) are included, the severity of functional impairment, and whether 
-  the requested hours are within typical ranges.</p>
+<h4>Q: What does the ML Predictor actually predict?</h4>
+<p><strong>A:</strong> It estimates the likelihood that a typical insurer would approve the request, based on the completeness and severity of clinical data. It's a decision-support tool, not a guarantee.</p>
 
-<h4>Q: Can I change the payer profile and re-run existing claims?</h4>
-<p><strong>A:</strong> Payer profile changes affect <em>future</em> calculations. Existing submitted claims retain 
-  the calculation from the time of submission. To test different profiles, use the Insurance Portal's 
-  <strong>Policy Calculator</strong> tab for scenario analysis.</p>
+<h4>Q: Can payer profile changes affect existing claims?</h4>
+<p><strong>A:</strong> No. Existing claims keep their original calculation. Profile changes only affect future calculations. Use the Policy Calculator for scenario testing.</p>
 
-<h4>Q: What happens when I click "Request Info" on a claim?</h4>
-<p><strong>A:</strong> The claim status changes to "Info Requested" and your notes are saved. In the current demo, 
-  the clinic sees this status change in their "My Claims" tab. In a production system, this would trigger a 
-  notification to the clinic.</p>
+<h4>Q: Is there an audit trail?</h4>
+<p><strong>A:</strong> Yes. Every submission, status change, and review action is logged with timestamps and user roles.</p>
 
-<h4>Q: Is there an audit trail of all actions?</h4>
-<p><strong>A:</strong> Yes. The system maintains an internal audit log that records every claim submission, 
-  status change, and review action with timestamps and user roles. This supports compliance and dispute resolution.</p>
+<h4>Q: How do I interpret clinical flags?</h4>
+<p><strong>A:</strong> Flags are automatic alerts that highlight situations requiring special attention. They don't change the calculation but signal the need for additional documentation or safety planning.</p>
 
-<h4>Q: How do I interpret the clinical flags?</h4>
-<p><strong>A:</strong> Clinical flags are automatically generated alerts that require attention. They don't change 
-  the calculation but highlight situations that may need additional documentation, safety plans, or specialized 
-  intervention approaches. See the Clinical Flags table in Section 5 for details.</p>
+<hr/>
+
+<h3>Glossary of Terms</h3>
+<table>
+  <tr><th>Term</th><th>Definition</th></tr>
+  <tr><td><strong>ABA</strong></td><td>Applied Behavior Analysis — evidence-based therapy for autism spectrum disorders</td></tr>
+  <tr><td><strong>BCBA</strong></td><td>Board Certified Behavior Analyst — the licensed professional conducting assessments</td></tr>
+  <tr><td><strong>FII</strong></td><td>Functional Impairment Index — a 9-domain severity rating (0–36) that drives base hours</td></tr>
+  <tr><td><strong>Vineland-3</strong></td><td>Vineland Adaptive Behavior Scales, 3rd Edition — standardized assessment of adaptive behavior</td></tr>
+  <tr><td><strong>VB-MAPP</strong></td><td>Verbal Behavior Milestones Assessment and Placement Program — assesses language/social milestones</td></tr>
+  <tr><td><strong>Dosage</strong></td><td>Recommended weekly therapy hours</td></tr>
+  <tr><td><strong>Tier</strong></td><td>Service intensity classification: Tier 1 (Focused &lt;20h), Tier 2 (Moderate 20–29h), Tier 3 (Intensive 30+h)</td></tr>
+  <tr><td><strong>Claim</strong></td><td>An authorization request sent from clinic to insurance for approval</td></tr>
+  <tr><td><strong>Payer Profile</strong></td><td>An insurance company's policy parameters that adjust calculation weights and limits</td></tr>
+  <tr><td><strong>ML Predictor</strong></td><td>The built-in AI approval probability estimator</td></tr>
+  <tr><td><strong>Clinical Flag</strong></td><td>An automatic alert triggered by high-risk conditions or severe impairment</td></tr>
+  <tr><td><strong>UM</strong></td><td>Utilization Management — the insurance process for reviewing authorization requests</td></tr>
+</table>
 
 <hr/>
 
 <div class="page-footer">
-  ABA Medical Necessity Calculator — Business User Guide v1.0 · February 2026<br/>
+  ABA Medical Necessity Calculator — Business User Guide v2.0 · February 2026<br/>
   Confidential — For Internal Use Only
 </div>
 

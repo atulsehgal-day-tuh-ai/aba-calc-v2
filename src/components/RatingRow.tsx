@@ -15,25 +15,25 @@ export function RatingRow({
   descriptions,
   color = 'clinic',
 }: RatingRowProps) {
-  const colorMap: Record<string, string> = {
-    clinic: 'bg-clinic',
-    insurance: 'bg-insur',
+  const activeColorMap: Record<string, string> = {
+    clinic: 'bg-secondary text-white',
+    insurance: 'bg-primary text-white',
   };
-  const activeClass = colorMap[color] || 'bg-clinic';
+  const activeClass = activeColorMap[color] || 'bg-secondary text-white';
 
   return (
-    <div className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0">
-      <span className="text-sm text-text w-48 flex-shrink-0">{label}</span>
-      <div className="flex gap-1">
+    <div className="flex items-center gap-3 py-2.5 border-b border-border last:border-0">
+      <span className="text-sm text-body w-48 flex-shrink-0">{label}</span>
+      <div className="flex gap-1.5">
         {Array.from({ length: max + 1 }, (_, i) => (
           <button
             key={i}
             type="button"
             onClick={() => onChange(i)}
-            className={`w-8 h-8 rounded text-xs font-medium transition-all
+            className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all focus-ring
               ${value === i
-                ? `${activeClass} text-bg`
-                : 'bg-bg border border-border text-muted hover:border-border-focus'
+                ? activeClass
+                : 'bg-card border-[1.5px] border-border-input text-text-secondary hover:border-primary hover:text-primary'
               }`}
           >
             {i}
@@ -41,7 +41,7 @@ export function RatingRow({
         ))}
       </div>
       {descriptions && descriptions[value] && (
-        <span className="text-xs text-dim ml-2">{descriptions[value]}</span>
+        <span className="text-xs text-text-secondary ml-2 italic">{descriptions[value]}</span>
       )}
     </div>
   );

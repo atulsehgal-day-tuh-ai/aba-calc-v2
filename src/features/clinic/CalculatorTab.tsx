@@ -101,12 +101,14 @@ export function CalculatorTab() {
   if (submitted) {
     return (
       <div className="flex flex-col items-center justify-center py-20 animate-fadeIn">
-        <CheckCircle2 size={48} className="text-clinic mb-4" />
-        <h2 className="text-xl font-bold text-text mb-2">Claim Submitted!</h2>
-        <p className="text-muted text-sm mb-6">Your authorization request is now in the insurance review queue.</p>
+        <div className="w-16 h-16 rounded-full bg-success-light flex items-center justify-center mb-4">
+          <CheckCircle2 size={32} className="text-success" />
+        </div>
+        <h2 className="text-xl font-bold text-heading mb-2">Claim Submitted!</h2>
+        <p className="text-text-secondary text-sm mb-6">Your authorization request is now in the insurance review queue.</p>
         <button
           onClick={() => { setSubmitted(false); setForm({ ...EMPTY_FORM }); }}
-          className="px-4 py-2 bg-clinic text-bg rounded-lg text-sm font-medium hover:opacity-90 transition"
+          className="btn-primary"
         >
           Start New Assessment
         </button>
@@ -117,7 +119,7 @@ export function CalculatorTab() {
   return (
     <div className="grid grid-cols-3 gap-6">
       {/* LEFT: Form (2/3 width) */}
-      <div className="col-span-2 space-y-4">
+      <div className="col-span-2 space-y-5">
         {/* Section 1: Demographics */}
         <Section title="Patient Demographics" stepNumber={1}>
           <div className="grid grid-cols-3 gap-4">
@@ -128,7 +130,7 @@ export function CalculatorTab() {
             <InputField label="Age" type="number" placeholder="2–21" min={2} max={21}
               value={form.age} onChange={(e) => setField('age', e.currentTarget.value)} />
           </div>
-          <div className="grid grid-cols-3 gap-4 mt-3">
+          <div className="grid grid-cols-3 gap-4 mt-4">
             <SelectField label="Diagnosis" value={form.diagnosis}
               onChange={(e) => setField('diagnosis', e.currentTarget.value)}
               options={[
@@ -161,7 +163,7 @@ export function CalculatorTab() {
         {/* Section 2: Functional Impairment Index */}
         <Section title="Functional Impairment Index (FII)" stepNumber={2}
           badge={calc && <Badge variant={calc.fii >= 20 ? 'danger' : calc.fii >= 12 ? 'warn' : 'success'}>{calc.fii}/36</Badge>}>
-          <p className="text-xs text-muted mb-3">Rate each domain 0 (none) to 4 (profound)</p>
+          <p className="text-xs text-text-secondary mb-3">Rate each domain 0 (none) to 4 (profound)</p>
           {FII_DOMAINS.map((d) => (
             <RatingRow
               key={d.key}
@@ -257,11 +259,11 @@ export function CalculatorTab() {
                 { value: '2plus', label: '2+ events' },
               ]} />
             <div className="flex items-end pb-1">
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2.5 cursor-pointer">
                 <input type="checkbox" checked={form.behavioral.elopement}
                   onChange={(e) => setBeh('elopement', e.currentTarget.checked)}
-                  className="w-4 h-4 rounded border-border bg-bg accent-clinic" />
-                <span className="text-sm text-text">Elopement / Wandering</span>
+                  className="w-4 h-4 rounded border-border-input accent-secondary" />
+                <span className="text-sm text-body">Elopement / Wandering</span>
               </label>
             </div>
           </div>
@@ -272,11 +274,11 @@ export function CalculatorTab() {
           badge={calc && calc.eAdj > 0 && <Badge variant="warn">+{calc.eAdj.toFixed(1)}h</Badge>}>
           <div className="grid grid-cols-2 gap-3">
             {ENV_MODIFIERS.map((m) => (
-              <label key={m.key} className="flex items-center gap-2 cursor-pointer py-1">
+              <label key={m.key} className="flex items-center gap-2.5 cursor-pointer py-1.5">
                 <input type="checkbox" checked={form.envModifiers[m.key] || false}
                   onChange={(e) => setEnv(m.key, e.currentTarget.checked)}
-                  className="w-4 h-4 rounded border-border bg-bg accent-clinic" />
-                <span className="text-sm text-text">{m.label}</span>
+                  className="w-4 h-4 rounded border-border-input accent-secondary" />
+                <span className="text-sm text-body">{m.label}</span>
               </label>
             ))}
           </div>
@@ -285,7 +287,7 @@ export function CalculatorTab() {
         {/* Section 8: Risk Assessment */}
         <Section title="Risk Assessment" stepNumber={8}
           badge={calc && calc.risk >= 15 && <Badge variant="danger">HIGH RISK</Badge>}>
-          <p className="text-xs text-muted mb-3">Rate each risk factor 0 (none) to 4 (extreme)</p>
+          <p className="text-xs text-text-secondary mb-3">Rate each risk factor 0 (none) to 4 (extreme)</p>
           {RISK_FACTORS.map((r) => (
             <RatingRow
               key={r.key}
@@ -299,28 +301,30 @@ export function CalculatorTab() {
       </div>
 
       {/* RIGHT: Results Panel (1/3 width, sticky) */}
-      <div className="space-y-4">
-        <div className="sticky top-6 space-y-4">
+      <div className="space-y-5">
+        <div className="sticky top-20 space-y-5">
           {/* Calculation Result */}
           {calc ? (
             <>
-              <div className="bg-card rounded-xl border border-clinic/30 p-5 animate-fadeIn">
+              <div className="card !border-l-4 !border-l-secondary animate-fadeIn">
                 <div className="flex items-center gap-2 mb-4">
-                  <Calculator size={18} className="text-clinic" />
-                  <h3 className="text-sm font-semibold text-text">Dosage Recommendation</h3>
+                  <Calculator size={18} className="text-secondary" />
+                  <h3 className="text-sm font-semibold text-subheading">Dosage Recommendation</h3>
                 </div>
                 <div className="text-center mb-4">
-                  <div className="text-5xl font-bold text-clinic">{calc.final}</div>
-                  <div className="text-sm text-muted">hours / week</div>
-                  <Badge variant={calc.tier === 3 ? 'danger' : calc.tier === 2 ? 'warn' : 'success'} className="mt-2">
-                    Tier {calc.tier} — {calc.tier === 3 ? 'Intensive' : calc.tier === 2 ? 'Moderate' : 'Focused'}
-                  </Badge>
+                  <div className="text-5xl font-bold text-secondary">{calc.final}</div>
+                  <div className="text-sm text-text-secondary mt-1">hours / week</div>
+                  <div className="mt-2">
+                    <Badge variant={calc.tier === 3 ? 'danger' : calc.tier === 2 ? 'warn' : 'success'}>
+                      Tier {calc.tier} — {calc.tier === 3 ? 'Intensive' : calc.tier === 2 ? 'Moderate' : 'Focused'}
+                    </Badge>
+                  </div>
                 </div>
 
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2 text-xs border-t border-border pt-3">
                   {calc.rationale.map((r, i) => (
-                    <div key={i} className="flex items-start gap-2 text-muted">
-                      <span className="text-clinic mt-0.5">›</span>
+                    <div key={i} className="flex items-start gap-2 text-text-secondary">
+                      <span className="text-secondary mt-0.5 font-bold">›</span>
                       <span>{r}</span>
                     </div>
                   ))}
@@ -339,30 +343,30 @@ export function CalculatorTab() {
 
               {/* Flags */}
               {calc.flags.length > 0 && (
-                <div className="bg-danger-soft rounded-xl border border-danger/30 p-4">
-                  <h4 className="text-xs font-semibold text-danger mb-2 flex items-center gap-1.5">
+                <div className="card !bg-critical-light !border-critical/30">
+                  <h4 className="text-xs font-semibold text-critical mb-2 flex items-center gap-1.5">
                     <AlertTriangle size={14} /> Clinical Flags
                   </h4>
                   {calc.flags.map((f, i) => (
-                    <div key={i} className="text-xs text-danger/80 py-0.5">• {f}</div>
+                    <div key={i} className="text-xs text-critical/80 py-0.5">• {f}</div>
                   ))}
                 </div>
               )}
 
               {/* ML Prediction */}
               {prediction && (
-                <div className="bg-card rounded-xl border border-insur/30 p-5 animate-fadeIn">
+                <div className="card !border-l-4 !border-l-primary animate-fadeIn">
                   <div className="flex items-center gap-2 mb-3">
-                    <Brain size={18} className="text-insur" />
-                    <h3 className="text-sm font-semibold text-text">Approval Predictor</h3>
-                    <Badge variant="purple" className="ml-auto">AI</Badge>
+                    <Brain size={18} className="text-primary" />
+                    <h3 className="text-sm font-semibold text-subheading">Approval Predictor</h3>
+                    <Badge variant="purple">AI</Badge>
                   </div>
                   <div className="text-center mb-3">
                     <div className={`text-3xl font-bold ${prediction.tier === 'likely-approve' ? 'text-success' :
-                      prediction.tier === 'borderline' ? 'text-warn' : 'text-danger'}`}>
+                      prediction.tier === 'borderline' ? 'text-warning' : 'text-critical'}`}>
                       {prediction.probability}%
                     </div>
-                    <div className="text-xs text-muted">Est. Approval Probability</div>
+                    <div className="text-xs text-text-secondary">Est. Approval Probability</div>
                   </div>
                   <Meter
                     value={prediction.probability}
@@ -373,10 +377,10 @@ export function CalculatorTab() {
                   <div className="mt-3 space-y-1.5">
                     {prediction.factors.slice(0, 4).map((f, i) => (
                       <div key={i} className="flex items-start gap-2 text-xs">
-                        <span className={f.impact === 'positive' ? 'text-success' : f.impact === 'negative' ? 'text-danger' : 'text-muted'}>
+                        <span className={f.impact === 'positive' ? 'text-success' : f.impact === 'negative' ? 'text-critical' : 'text-text-secondary'}>
                           {f.impact === 'positive' ? '✓' : f.impact === 'negative' ? '✗' : '–'}
                         </span>
-                        <span className="text-muted">{f.detail}</span>
+                        <span className="text-text-secondary">{f.detail}</span>
                       </div>
                     ))}
                   </div>
@@ -386,17 +390,16 @@ export function CalculatorTab() {
               {/* Submit Button */}
               <button
                 onClick={handleSubmit}
-                className="w-full flex items-center justify-center gap-2 bg-clinic text-bg py-3 rounded-xl
-                  font-semibold hover:opacity-90 transition text-sm"
+                className="btn-primary w-full justify-center !py-3"
               >
                 <Send size={16} />
                 Submit for Authorization
               </button>
             </>
           ) : (
-            <div className="bg-card rounded-xl border border-border p-8 text-center">
-              <BarChart3 size={32} className="text-dim mx-auto mb-3" />
-              <p className="text-sm text-muted">Enter patient age to see live calculation</p>
+            <div className="card text-center !py-12">
+              <BarChart3 size={32} className="text-disabled mx-auto mb-3" />
+              <p className="text-sm text-text-secondary">Enter patient age to see live calculation</p>
             </div>
           )}
         </div>

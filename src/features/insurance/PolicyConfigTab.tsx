@@ -3,7 +3,7 @@ import { api } from '../../lib/api.ts';
 import { InputField } from '../../components/Field.tsx';
 import { Section } from '../../components/Section.tsx';
 import { Badge } from '../../components/Badge.tsx';
-import { Settings, Save, RotateCcw } from 'lucide-react';
+import { Settings, Save, AlertTriangle } from 'lucide-react';
 import type { PayerProfile } from '../../lib/calculator.ts';
 
 interface PolicyProfile extends PayerProfile {
@@ -15,12 +15,20 @@ export function PolicyConfigTab() {
   const [selected, setSelected] = useState<PolicyProfile | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    api.getPayerProfiles().then((data) => {
-      setProfiles(data);
-      if (data.length > 0) setSelected(data[0]);
-    }).catch(() => {});
+    let cancelled = false;
+    api.getPayerProfiles()
+      .then((data) => {
+        if (cancelled) return;
+        setProfiles(data);
+        if (data.length > 0) setSelected(data[0]);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err.message || 'Failed to load payer profiles');
+      });
+    return () => { cancelled = true; };
   }, []);
 
   const handleSave = async () => {
@@ -42,23 +50,42 @@ export function PolicyConfigTab() {
     setSelected({ ...selected, [key]: val });
   };
 
+  if (error) {
+    return (
+      <div className="text-center py-12 animate-fadeIn">
+        <div className="w-14 h-14 rounded-full bg-critical-light flex items-center justify-center mx-auto mb-3">
+          <AlertTriangle size={24} className="text-critical" />
+        </div>
+        <p className="text-sm text-critical font-medium">{error}</p>
+        <button onClick={() => { setError(null); api.getPayerProfiles().then((data) => { setProfiles(data); if (data.length > 0) setSelected(data[0]); }).catch((e) => setError(e.message)); }}
+          className="btn-secondary btn-sm mt-4">
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   if (!selected) {
-    return <div className="text-muted text-sm py-8 text-center">Loading policy configuration…</div>;
+    return (
+      <div className="space-y-4">
+        {[1,2,3].map(i => <div key={i} className="skeleton h-32 w-full" />)}
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-3xl space-y-4 animate-fadeIn">
+    <div className="max-w-3xl space-y-5 animate-fadeIn">
       {/* Profile Selector */}
-      <div className="flex items-center gap-3 mb-4">
-        <Settings size={18} className="text-insur" />
-        <h3 className="text-sm font-semibold text-text">Policy Configuration</h3>
+      <div className="flex items-center gap-3 mb-2">
+        <Settings size={18} className="text-primary" />
+        <h3 className="text-base font-semibold text-heading">Policy Configuration</h3>
         <div className="flex gap-2 ml-auto">
           {profiles.map((p) => (
             <button key={p.id || p.name} onClick={() => setSelected(p)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium border-[1.5px] transition-all focus-ring ${
                 selected.name === p.name
-                  ? 'border-insur/40 bg-insur-soft text-insur'
-                  : 'border-border text-muted hover:border-insur/30'
+                  ? 'border-primary bg-primary-light text-primary'
+                  : 'border-border text-text-secondary hover:border-primary hover:text-primary'
               }`}>
               {p.name}
             </button>
@@ -76,7 +103,7 @@ export function PolicyConfigTab() {
       </Section>
 
       <Section title="Domain Weights" color="insurance">
-        <p className="text-xs text-muted mb-3">Adjust how heavily each domain influences the final calculation (1.0 = standard)</p>
+        <p className="text-xs text-text-secondary mb-3">Adjust how heavily each domain influences the final calculation (1.0 = standard)</p>
         <div className="grid grid-cols-3 gap-4">
           <InputField label="FII Weight" type="number" step="0.1"
             value={selected.fiiW?.toString() ?? ''} onChange={(e) => updateField('fiiW', Number(e.currentTarget.value))} />
@@ -118,7 +145,7 @@ export function PolicyConfigTab() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-5 py-2.5 bg-insur text-bg rounded-xl font-semibold text-sm hover:opacity-90 transition disabled:opacity-50"
+          className="btn-primary"
         >
           <Save size={16} />
           {saving ? 'Saving…' : 'Save Configuration'}

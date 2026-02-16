@@ -7,8 +7,8 @@ interface ChipsProps {
 
 export function Chips({ options, selected, onChange, color = 'clinic' }: ChipsProps) {
   const activeClass = color === 'insurance'
-    ? 'bg-insur-soft border-insur/40 text-insur'
-    : 'bg-clinic-soft border-clinic/40 text-clinic';
+    ? 'bg-primary-light border-primary text-primary'
+    : 'bg-clinic-light border-clinic text-clinic';
 
   const toggle = (opt: string) => {
     if (selected.includes(opt)) {
@@ -25,10 +25,10 @@ export function Chips({ options, selected, onChange, color = 'clinic' }: ChipsPr
           key={opt}
           type="button"
           onClick={() => toggle(opt)}
-          className={`px-3 py-1.5 rounded-lg text-sm border transition-all
+          className={`px-3 py-1.5 rounded-lg text-sm font-medium border-[1.5px] transition-all focus-ring
             ${selected.includes(opt)
               ? activeClass
-              : 'bg-bg border-border text-muted hover:border-border-focus'
+              : 'bg-card border-border text-text-secondary hover:border-primary hover:text-primary'
             }`}
         >
           {opt}

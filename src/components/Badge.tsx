@@ -1,22 +1,22 @@
+import type { ReactNode } from 'react';
+
 interface BadgeProps {
-  children: React.ReactNode;
-  variant?: 'success' | 'warn' | 'danger' | 'info' | 'purple' | 'teal' | 'muted';
-  className?: string;
+  variant?: 'success' | 'danger' | 'warn' | 'info' | 'purple' | 'default';
+  children: ReactNode;
 }
 
-const variantStyles: Record<string, string> = {
-  success: 'bg-success-soft text-success',
-  warn: 'bg-warn-soft text-warn',
-  danger: 'bg-danger-soft text-danger',
-  info: 'bg-clinic-soft text-clinic',
-  purple: 'bg-purple-soft text-purple',
-  teal: 'bg-teal-soft text-teal',
-  muted: 'bg-border text-muted',
+const styles: Record<string, string> = {
+  success: 'bg-success-light text-success',
+  danger:  'bg-critical-light text-critical',
+  warn:    'bg-warning-light text-warning',
+  info:    'bg-info-light text-info',
+  purple:  'bg-[#F3E8FF] text-[#7C3AED]',
+  default: 'bg-[#F0F4F8] text-text-secondary',
 };
 
-export function Badge({ children, variant = 'muted', className = '' }: BadgeProps) {
+export function Badge({ variant = 'default', children }: BadgeProps) {
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variantStyles[variant]} ${className}`}>
+    <span className={`badge-pill ${styles[variant] || styles.default}`}>
       {children}
     </span>
   );

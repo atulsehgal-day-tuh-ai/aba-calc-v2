@@ -10,9 +10,9 @@ interface FieldProps {
 export function Field({ label, hint, children, className = '' }: FieldProps) {
   return (
     <label className={`block ${className}`}>
-      <span className="text-sm font-medium text-muted mb-1 block">{label}</span>
+      <span className="text-xs font-medium text-text-secondary uppercase tracking-[0.5px] mb-1.5 block">{label}</span>
       {children}
-      {hint && <span className="text-xs text-dim mt-1 block">{hint}</span>}
+      {hint && <span className="text-xs text-text-secondary mt-1 block">{hint}</span>}
     </label>
   );
 }
@@ -26,8 +26,10 @@ export function InputField({ label, hint, className, ...props }: InputFieldProps
   return (
     <Field label={label} hint={hint}>
       <input
-        className={`w-full bg-bg border border-border rounded-lg px-3 py-2 text-text placeholder:text-dim
-          focus:border-border-focus focus:outline-none focus:ring-1 focus:ring-border-focus transition ${className ?? ''}`}
+        className={`w-full bg-card border-[1.5px] border-border-input rounded-lg px-3 py-2.5 text-sm text-body
+          placeholder:text-placeholder
+          focus:border-border-focus focus:outline-none focus:shadow-[0_0_0_3px_rgba(11,111,164,0.15)]
+          transition-all duration-200 ${className ?? ''}`}
         {...props}
       />
     </Field>
@@ -44,8 +46,10 @@ export function SelectField({ label, hint, options, className, ...props }: Selec
   return (
     <Field label={label} hint={hint}>
       <select
-        className={`w-full bg-bg border border-border rounded-lg px-3 py-2 text-text
-          focus:border-border-focus focus:outline-none focus:ring-1 focus:ring-border-focus transition ${className ?? ''}`}
+        className={`w-full bg-card border-[1.5px] border-border-input rounded-lg px-3 py-2.5 text-sm text-body
+          placeholder:text-placeholder
+          focus:border-border-focus focus:outline-none focus:shadow-[0_0_0_3px_rgba(11,111,164,0.15)]
+          transition-all duration-200 ${className ?? ''}`}
         {...props}
       >
         <option value="">Select…</option>

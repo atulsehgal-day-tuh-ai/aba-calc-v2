@@ -13,31 +13,32 @@ interface TabBarProps {
 }
 
 export function TabBar({ tabs, active, onChange, color = 'clinic' }: TabBarProps) {
-  const activeColor = color === 'insurance'
-    ? 'border-insur text-insur'
-    : 'border-clinic text-clinic';
+  const activeBorder = color === 'insurance' ? 'border-l-[3px] border-l-[#0B6FA4]' : 'border-l-[3px] border-l-[#00897B]';
 
   return (
-    <div className="flex gap-1 border-b border-border mb-6">
-      {tabs.map((tab) => (
-        <button
-          key={tab.key}
-          onClick={() => onChange(tab.key)}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors
-            ${active === tab.key
-              ? activeColor
-              : 'border-transparent text-muted hover:text-text'
-            }`}
-        >
-          {tab.icon}
-          {tab.label}
-          {tab.count !== undefined && (
-            <span className="ml-1 text-xs bg-border rounded-full px-2 py-0.5">
-              {tab.count}
-            </span>
-          )}
-        </button>
-      ))}
-    </div>
+    <>
+      {tabs.map((tab) => {
+        const isActive = active === tab.key;
+        return (
+          <button
+            key={tab.key}
+            onClick={() => onChange(tab.key)}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all focus-ring
+              ${isActive
+                ? `bg-white/10 text-white ${activeBorder}`
+                : 'text-[#CBD5E1] hover:bg-white/[0.05] hover:text-white border-l-[3px] border-l-transparent'
+              }`}
+          >
+            {tab.icon}
+            <span className="truncate">{tab.label}</span>
+            {tab.count !== undefined && (
+              <span className="ml-auto text-[11px] bg-white/10 rounded-full px-2 py-0.5 tabular-nums">
+                {tab.count}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </>
   );
 }

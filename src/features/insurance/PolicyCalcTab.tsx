@@ -58,7 +58,7 @@ export function PolicyCalcTab() {
 
   return (
     <div className="grid grid-cols-3 gap-6">
-      <div className="col-span-2 space-y-4">
+      <div className="col-span-2 space-y-5">
         {/* Quick Demographics */}
         <Section title="Scenario Input" color="insurance">
           <div className="grid grid-cols-3 gap-4">
@@ -131,11 +131,11 @@ export function PolicyCalcTab() {
         <Section title="Environmental" color="insurance">
           <div className="grid grid-cols-2 gap-3">
             {ENV_MODIFIERS.map((m) => (
-              <label key={m.key} className="flex items-center gap-2 cursor-pointer py-1">
+              <label key={m.key} className="flex items-center gap-2.5 cursor-pointer py-1.5">
                 <input type="checkbox" checked={form.envModifiers[m.key] || false}
                   onChange={(e) => setEnv(m.key, e.currentTarget.checked)}
-                  className="w-4 h-4 rounded accent-insur" />
-                <span className="text-sm text-text">{m.label}</span>
+                  className="w-4 h-4 rounded border-border-input accent-primary" />
+                <span className="text-sm text-body">{m.label}</span>
               </label>
             ))}
           </div>
@@ -143,26 +143,26 @@ export function PolicyCalcTab() {
       </div>
 
       {/* Results */}
-      <div className="space-y-4">
-        <div className="sticky top-6 space-y-4">
+      <div className="space-y-5">
+        <div className="sticky top-20 space-y-5">
           {calc ? (
             <>
-              <div className="bg-card rounded-xl border border-insur/30 p-5 animate-fadeIn">
+              <div className="card !border-l-4 !border-l-primary animate-fadeIn">
                 <div className="flex items-center gap-2 mb-4">
-                  <Calculator size={18} className="text-insur" />
-                  <h3 className="text-sm font-semibold text-text">Policy Calculation</h3>
+                  <Calculator size={18} className="text-primary" />
+                  <h3 className="text-sm font-semibold text-subheading">Policy Calculation</h3>
                 </div>
                 <div className="text-center mb-4">
-                  <div className="text-5xl font-bold text-insur">{calc.final}</div>
-                  <div className="text-sm text-muted">hours / week</div>
-                  <Badge variant="purple" className="mt-2">
-                    Tier {calc.tier}
-                  </Badge>
+                  <div className="text-5xl font-bold text-primary">{calc.final}</div>
+                  <div className="text-sm text-text-secondary mt-1">hours / week</div>
+                  <div className="mt-2">
+                    <Badge variant="purple">Tier {calc.tier}</Badge>
+                  </div>
                 </div>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2 text-xs border-t border-border pt-3">
                   {calc.rationale.map((r, i) => (
-                    <div key={i} className="flex items-start gap-2 text-muted">
-                      <span className="text-insur">›</span>
+                    <div key={i} className="flex items-start gap-2 text-text-secondary">
+                      <span className="text-primary font-bold">›</span>
                       <span>{r}</span>
                     </div>
                   ))}
@@ -175,8 +175,8 @@ export function PolicyCalcTab() {
               </div>
 
               {prediction && (
-                <div className="bg-card rounded-xl border border-border p-4">
-                  <div className="text-xs text-muted mb-2">Approval Estimate</div>
+                <div className="card">
+                  <div className="text-xs font-medium text-text-secondary uppercase tracking-wide mb-2">Approval Estimate</div>
                   <Meter value={prediction.probability}
                     color={prediction.tier === 'likely-approve' ? 'success' : prediction.tier === 'borderline' ? 'warn' : 'danger'}
                     label={`${prediction.probability}%`} />
@@ -184,9 +184,9 @@ export function PolicyCalcTab() {
               )}
             </>
           ) : (
-            <div className="bg-card rounded-xl border border-border p-8 text-center">
-              <Calculator size={32} className="text-dim mx-auto mb-3" />
-              <p className="text-sm text-muted">Enter age to begin scenario analysis</p>
+            <div className="card text-center !py-12">
+              <Calculator size={32} className="text-disabled mx-auto mb-3" />
+              <p className="text-sm text-text-secondary">Enter age to begin scenario analysis</p>
             </div>
           )}
         </div>

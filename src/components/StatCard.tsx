@@ -6,23 +6,31 @@ interface StatCardProps {
   color?: 'clinic' | 'insurance' | 'warn' | 'danger' | 'success';
 }
 
-const colorMap: Record<string, string> = {
-  clinic: 'border-clinic/20 text-clinic',
-  insurance: 'border-insur/20 text-insur',
-  warn: 'border-warn/20 text-warn',
-  danger: 'border-danger/20 text-danger',
-  success: 'border-success/20 text-success',
+const accentMap: Record<string, string> = {
+  clinic:    'stat-card-secondary',
+  insurance: 'stat-card-primary',
+  warn:      'stat-card-warning',
+  danger:    'stat-card-danger',
+  success:   'stat-card-success',
+};
+
+const iconColorMap: Record<string, string> = {
+  clinic:    'text-secondary',
+  insurance: 'text-primary',
+  warn:      'text-warning',
+  danger:    'text-critical',
+  success:   'text-success',
 };
 
 export function StatCard({ label, value, sublabel, icon, color = 'clinic' }: StatCardProps) {
   return (
-    <div className={`bg-card rounded-xl border ${colorMap[color].split(' ')[0]} p-4`}>
+    <div className={`card ${accentMap[color]}`}>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-muted uppercase tracking-wide">{label}</span>
-        {icon && <span className={colorMap[color].split(' ')[1]}>{icon}</span>}
+        <span className="text-xs font-medium text-text-secondary uppercase tracking-wide">{label}</span>
+        {icon && <span className={iconColorMap[color]}>{icon}</span>}
       </div>
-      <div className={`text-2xl font-bold ${colorMap[color].split(' ')[1]}`}>{value}</div>
-      {sublabel && <div className="text-xs text-dim mt-1">{sublabel}</div>}
+      <div className="text-2xl font-bold text-heading">{value}</div>
+      {sublabel && <div className="text-xs text-text-secondary mt-1">{sublabel}</div>}
     </div>
   );
 }
